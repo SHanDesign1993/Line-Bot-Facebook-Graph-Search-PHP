@@ -31,28 +31,26 @@ foreach ($client->parseEvents() as $event) {
             switch ($message['type']) {
                 case 'text':
                 	$m_message = $message['text'];
-                  
-                	if($m_message!="")
-                	{
-                        $r_message="你好毛毛，祝你天天黑皮!";
-                        if(strpos($m_message,"點數")!==false){
+                  $r_message="Hi! Tangya:)";
+                        if( strpos( $message['text'], 'point' ) !== false ){
                             $count = file_get_contents("http://140.117.6.187/Analysis/FunctionDisplay/linebot_get_point.php");
                             $r_message="目前毛毛的點數總共是".$count."點._.";
                         }
 
-                        if(strpos($m_message,"結算")!==false||strpos($m_message,"加")!==false){
+                        if( strpos( $message['text'], 'add' ) !== false||strpos( $message['text'], 'ok' ) !== false){
                             $add = file_get_contents("http://140.117.6.187/Analysis/FunctionDisplay/linebot_add_point.php");
                             $count = file_get_contents("http://140.117.6.187/Analysis/FunctionDisplay/linebot_get_point.php");
                             $r_message="毛毛的點數又多了一點喔！ 總共是".$count."點 >3<";
                         }
 
-                        if(strpos($m_message,"爽歪歪")!==false){
+                        if(strpos( $message['text'], 'song' ) !== false){
                             $ex = file_get_contents("http://140.117.6.187/Analysis/FunctionDisplay/linebot_change_point.php");
                             $count = file_get_contents("http://140.117.6.187/Analysis/FunctionDisplay/linebot_get_point.php");
                             $r_message="毛毛用5點換了一餐！ 剩下".$count."點 >3<";
                         }
                   
-                  
+                	if($m_message!="")
+                	{
                 		$client->replyMessage(array(
                         'replyToken' => $event['replyToken'],
                         'messages' => array(

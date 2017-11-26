@@ -31,18 +31,19 @@ foreach ($client->parseEvents() as $event) {
             switch ($message['type']) {
                 case 'text':
                 	$m_message = $message['text'];
-                  $r_message="你好毛毛，祝你天天黑皮!";
+                  
                 	if($m_message!="")
                 	{
-                    if(strpos($m_message,"點數")){
-                            $pt = file_get_contents("http://140.117.6.187/Analysis/FunctionDisplay/linebot_get_point.php");
+                     $r_message="你好毛毛，祝你天天黑皮!";
+                        if(strpos($m_message,"點數")){
+                            $pt = file_get_contents("140.117.6.187/Analysis/FunctionDisplay/linebot_get_point.php");
                             $r_message="目前毛毛的點數總共是".$pt."點._.";
                         }
 
                         if(strpos($m_message,"結算")||strpos($m_message,"加")){
-                            $add = file_get_contents("http://140.117.6.187/Analysis/FunctionDisplay/linebot_add_point.php");
+                            $add = file_get_contents("140.117.6.187/Analysis/FunctionDisplay/linebot_add_point.php");
     
-                            $pt = file_get_contents("http://140.117.6.187/Analysis/FunctionDisplay/linebot_get_point.php");
+                            $pt = file_get_contents("140.117.6.187/Analysis/FunctionDisplay/linebot_get_point.php");
                             $r_message="毛毛的點數又多了一點喔！ 總共是".$pt."點 >3<";
                         }
 

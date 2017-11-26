@@ -1,7 +1,7 @@
 {
   "name": "linebot-php-heroku-framework",
   "description": "a tiny PHP framework to deploy your linebot on heroku",
-  "repository": "https://github.com/CHY0919/linebot-php-heroku-framework.git",
+  "repository": "https://github.com/SHanDesign1993/linebot.git",
   "keywords": ["linebot-php", "LINE"],
   "env": {
     "LINE_CHANNEL_SECRET": {

@@ -34,22 +34,22 @@ foreach ($client->parseEvents() as $event) {
                   
                 	if($m_message!="")
                 	{
-                     $r_message="你好毛毛，祝你天天黑皮!";
-                        if(strpos($m_message,"點數")){
-                            $pt = file_get_contents("140.117.6.187/Analysis/FunctionDisplay/linebot_get_point.php");
-                            $r_message="目前毛毛的點數總共是".$pt."點._.";
+                        $r_message="你好毛毛，祝你天天黑皮!";
+                        if(strpos($m_message,"點數")!==false){
+                            $count = file_get_contents("http://140.117.6.187/Analysis/FunctionDisplay/linebot_get_point.php");
+                            $r_message="目前毛毛的點數總共是".$count."點._.";
                         }
 
-                        if(strpos($m_message,"結算")||strpos($m_message,"加")){
-                            $add = file_get_contents("140.117.6.187/Analysis/FunctionDisplay/linebot_add_point.php");
-    
-                            $pt = file_get_contents("140.117.6.187/Analysis/FunctionDisplay/linebot_get_point.php");
-                            $r_message="毛毛的點數又多了一點喔！ 總共是".$pt."點 >3<";
+                        if(strpos($m_message,"結算")!==false||strpos($m_message,"加")!==false){
+                            $add = file_get_contents("http://140.117.6.187/Analysis/FunctionDisplay/linebot_add_point.php");
+                            $count = file_get_contents("http://140.117.6.187/Analysis/FunctionDisplay/linebot_get_point.php");
+                            $r_message="毛毛的點數又多了一點喔！ 總共是".$count."點 >3<";
                         }
 
-                        if(strpos($m_message,"爽歪歪")){
+                        if(strpos($m_message,"爽歪歪")!==false){
                             $ex = file_get_contents("http://140.117.6.187/Analysis/FunctionDisplay/linebot_change_point.php");
-                            $r_message="毛毛的點數又多了一點喔！ 總共是".$pt."點 >3<";
+                            $count = file_get_contents("http://140.117.6.187/Analysis/FunctionDisplay/linebot_get_point.php");
+                            $r_message="毛毛用5點換了一餐！ 剩下".$count."點 >3<";
                         }
                   
                   

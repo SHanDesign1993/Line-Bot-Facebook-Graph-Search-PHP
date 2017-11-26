@@ -34,19 +34,19 @@ foreach ($client->parseEvents() as $event) {
                   $r_message="Hi! Tangya:)";
                         if( strpos( $message['text'], 'point' ) !== false ){
                             $count = file_get_contents("http://140.117.6.187/Analysis/FunctionDisplay/linebot_get_point.php");
-                            $r_message="目前毛毛的點數總共是".$count."點._.";
+                            $r_message="Tangya has ".$count."points! ._.";
                         }
 
                         if( strpos( $message['text'], 'add' ) !== false||strpos( $message['text'], 'ok' ) !== false){
                             $add = file_get_contents("http://140.117.6.187/Analysis/FunctionDisplay/linebot_add_point.php");
                             $count = file_get_contents("http://140.117.6.187/Analysis/FunctionDisplay/linebot_get_point.php");
-                            $r_message="毛毛的點數又多了一點喔！ 總共是".$count."點 >3<";
+                            $r_message="Tangya earned a point today! totally".$count."points! >3<";
                         }
 
                         if(strpos( $message['text'], 'song' ) !== false){
                             $ex = file_get_contents("http://140.117.6.187/Analysis/FunctionDisplay/linebot_change_point.php");
                             $count = file_get_contents("http://140.117.6.187/Analysis/FunctionDisplay/linebot_get_point.php");
-                            $r_message="毛毛用5點換了一餐！ 剩下".$count."點 >3<";
+                            $r_message="Tangya exchanged 5 points for a meal  left".$count."points >3<";
                         }
                   
                 	if($m_message!="")

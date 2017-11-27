@@ -31,7 +31,7 @@ foreach ($client->parseEvents() as $event) {
             switch ($message['type']) {
                 case 'text':
                 	$m_message = $message['text'];
-                  $r_message="Hi! Tangya:)";
+                  $r_message='你好！毛毛';
                         if( strpos( $message['text'], 'point' ) !== false ){
                             $count = file_get_contents("http://140.117.6.187/Analysis/FunctionDisplay/linebot_get_point.php");
                             $r_message="Tangya has ".$count." pt! ._.";
@@ -54,6 +54,10 @@ foreach ($client->parseEvents() as $event) {
                 		$client->replyMessage(array(
                         'replyToken' => $event['replyToken'],
                         'messages' => array(
+                            array(
+                                'type' => 'text',
+                                'text' => '讓我想想喔...'
+                            ),
                             array(
                                 'type' => 'text',
                                 'text' => $r_message

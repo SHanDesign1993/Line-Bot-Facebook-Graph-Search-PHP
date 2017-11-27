@@ -36,11 +36,17 @@ foreach ($client->parseEvents() as $event) {
                     $r_message='嗨！毛毛'.$emoticon.'~\n你是來領取點數的嗎？要跟我說通關密語哦';
                         if( strpos( $message['text'], '點數' ) !== false || strpos( $message['text'], '查' ) !== false){
                             $count = file_get_contents("http://140.117.6.187/Analysis/FunctionDisplay/linebot_get_point.php");
-                            $r_message='毛毛現在總共有 '.$count.' 點了耶耶!'.GetEmoji('1000B6');
+                            $bin = hex2bin(str_repeat('0', 8 - strlen('1000B6')) . '1000B6');
+                            $emoticon =  mb_convert_encoding($bin, 'UTF-8', 'UTF-32BE');
+                            $r_message='毛毛現在總共有 '.$count.' 點了耶耶!'.$emoticon;
                             if($count>=3){
-                              $r_message.='\n好誇喔喔喔'.GetEmoji('100091');
+                              $bin = hex2bin(str_repeat('0', 8 - strlen('100091')) . '100091');
+                              $emoticon =  mb_convert_encoding($bin, 'UTF-8', 'UTF-32BE');
+                              $r_message.='\n好誇喔喔喔'.$emoticon;
                             }else{
-                              $r_message.='\n繼續加油囉'.GetEmoji('10008A');
+                              $bin = hex2bin(str_repeat('0', 8 - strlen('10008A')) . '10008A');
+                              $emoticon =  mb_convert_encoding($bin, 'UTF-8', 'UTF-32BE');
+                              $r_message.='\n繼續加油囉'.$emoticon;
                             }
                             
                         }
@@ -49,9 +55,13 @@ foreach ($client->parseEvents() as $event) {
                             $add = file_get_contents("http://140.117.6.187/Analysis/FunctionDisplay/linebot_add_point.php");
                             $count = file_get_contents("http://140.117.6.187/Analysis/FunctionDisplay/linebot_get_point.php");
                             if($add=='ok'){
-                              $r_message='毛寶寶爭氣的獲得了1點&#100037\n總共有 '.$count.'點了哦嘿嘿'.GetEmoji('100022');
+                              $bin = hex2bin(str_repeat('0', 8 - strlen('100022')) . '100022');
+                              $emoticon =  mb_convert_encoding($bin, 'UTF-8', 'UTF-32BE');
+                              $r_message='毛寶寶爭氣的獲得了1點&#100037\n總共有 '.$count.'點了哦嘿嘿'.$emoticon;
                             }else{
-                              $r_message='毛毛今天拿過點數了喔！\n'.GetEmoji('10000');
+                              $bin = hex2bin(str_repeat('0', 8 - strlen('10000')) . '10000');
+                              $emoticon =  mb_convert_encoding($bin, 'UTF-8', 'UTF-32BE');
+                              $r_message='毛毛今天拿過點數了喔！\n'.$emoticon;
                             }
                         }
 
@@ -83,11 +93,4 @@ foreach ($client->parseEvents() as $event) {
             break;
     }
 };
-
-function GetEmoji($code){
-    $bin = hex2bin(str_repeat('0', 8 - strlen($code)) . $code);
-    $emoticon =  mb_convert_encoding($bin, 'UTF-8', 'UTF-32BE');
-    return $emoticon;
-}
-
 ?>

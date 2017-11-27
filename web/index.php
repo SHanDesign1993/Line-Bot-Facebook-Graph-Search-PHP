@@ -31,7 +31,7 @@ foreach ($client->parseEvents() as $event) {
             switch ($message['type']) {
                 case 'text':
                 	$m_message = $message['text'];
-                    $r_message='嗨！毛毛'.unichr(0x100037).'~'.urlencode(\n).'你是來領取點數的嗎？要跟我說通關密語哦';
+                    $r_message='嗨！毛毛'.unichr(0x100037).'~'.unichr(\n).'你是來領取點數的嗎？要跟我說通關密語哦';
                         if( strpos( $message['text'], '點數' ) !== false || strpos( $message['text'], '查' ) !== false){
                             $count = file_get_contents("http://140.117.6.187/Analysis/FunctionDisplay/linebot_get_point.php");
                             $r_message='毛毛現在總共有 '.$count.' 點!!!'.unichr(0x1000B6);

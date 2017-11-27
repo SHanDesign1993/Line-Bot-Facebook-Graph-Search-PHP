@@ -31,14 +31,14 @@ foreach ($client->parseEvents() as $event) {
             switch ($message['type']) {
                 case 'text':
                 	$m_message = $message['text'];
-                    $r_message='嗨！毛毛0x100008~\n你是來領取點數的嗎？要跟我說通關密語哦';
+                    $r_message='嗨！毛毛&#100008~\n你是來領取點數的嗎？要跟我說通關密語哦';
                         if( strpos( $message['text'], '點數' ) !== false || strpos( $message['text'], '查' ) !== false){
                             $count = file_get_contents("http://140.117.6.187/Analysis/FunctionDisplay/linebot_get_point.php");
-                            $r_message='毛毛現在總共有 '.$count.' 點了耶耶!0x1000B6';
+                            $r_message='毛毛現在總共有 '.$count.' 點了耶耶!&#1000B6';
                             if($count>=3){
-                              $r_message.='\n好誇喔喔喔0x100091';
+                              $r_message.='\n好誇喔喔喔&#100091';
                             }else{
-                              $r_message.='\n繼續加油囉0x10008A';
+                              $r_message.='\n繼續加油囉&#10008A';
                             }
                             
                         }
@@ -47,9 +47,9 @@ foreach ($client->parseEvents() as $event) {
                             $add = file_get_contents("http://140.117.6.187/Analysis/FunctionDisplay/linebot_add_point.php");
                             $count = file_get_contents("http://140.117.6.187/Analysis/FunctionDisplay/linebot_get_point.php");
                             if($add=='ok'){
-                              $r_message='毛寶寶爭氣的獲得了1點0x100037\n總共有 '.$count.'點了哦嘿嘿0x100022';
+                              $r_message='毛寶寶爭氣的獲得了1點&#100037\n總共有 '.$count.'點了哦嘿嘿&#100022';
                             }else{
-                              $r_message='毛毛今天拿過點數了喔！\n這樣不乖內0x10000';
+                              $r_message='毛毛今天拿過點數了喔！\n這樣不乖內&#10000';
                             }
                         }
 

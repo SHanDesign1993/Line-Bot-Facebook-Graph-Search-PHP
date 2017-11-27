@@ -87,4 +87,5 @@ function GetEmoji($code){
     $emoticon =  mb_convert_encoding($bin, 'UTF-8', 'UTF-32BE');
     return $emoticon;
 }
+
 ?>

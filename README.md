@@ -1,4 +1,4 @@
-# linebot
+# LINE BOT PHP & MySQL
 line bot app with php & mysql(on the server)
 </br>
 <a href="https://developers.line.me/en/" target="_blank">

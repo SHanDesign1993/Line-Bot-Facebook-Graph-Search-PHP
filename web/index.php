@@ -31,22 +31,27 @@ foreach ($client->parseEvents() as $event) {
             switch ($message['type']) {
                 case 'text':
                 	$m_message = $message['text'];
-                  $r_message='你好！毛毛';
-                        if( strpos( $message['text'], 'point' ) !== false ){
+                    $r_message='嗨！毛毛(1 heart)~你是來領取點數的嗎？要跟我說通關密語哦';
+                        if( strpos( $message['text'], '點數' ) !== false || strpos( $message['text'], '查' ) !== false){
                             $count = file_get_contents("http://140.117.6.187/Analysis/FunctionDisplay/linebot_get_point.php");
-                            $r_message="Tangya has ".$count." pt! ._.";
+                            $r_message='毛毛現在總共有 '.$count.' 點了耶耶(chocolate cake)';
+                            
                         }
 
-                        if( strpos( $message['text'], 'add' ) !== false||strpos( $message['text'], 'ok' ) !== false){
+                        if( strpos( $message['text'], '漢寶我愛你' ) !== false || strpos( $message['text'], 'ok' ) !== false){
                             $add = file_get_contents("http://140.117.6.187/Analysis/FunctionDisplay/linebot_add_point.php");
                             $count = file_get_contents("http://140.117.6.187/Analysis/FunctionDisplay/linebot_get_point.php");
-                            $r_message="Tangya earned a point today! u have ".$count." pt now >3<";
+                            if($add=='ok'){
+                              $r_message='毛寶寶獲得了1點~總共有 '.$count.'點了哦嘿嘿嘿(catface)';
+                            }else{
+                              $r_message='毛毛今天拿過點數了喔！ 這樣不乖內(poop)';
+                            }
                         }
 
-                        if(strpos( $message['text'], 'song' ) !== false){
+                        if(strpos( $message['text'], '毛毛吃大餐' ) !== false){
                             $ex = file_get_contents("http://140.117.6.187/Analysis/FunctionDisplay/linebot_change_point.php");
                             $count = file_get_contents("http://140.117.6.187/Analysis/FunctionDisplay/linebot_get_point.php");
-                            $r_message="Tangya exchanged 5 points for a meal  left ".$count." pt >3<";
+                            $r_message='兌換成功！';
                         }
                   
                 	if($m_message!="")
@@ -54,10 +59,7 @@ foreach ($client->parseEvents() as $event) {
                 		$client->replyMessage(array(
                         'replyToken' => $event['replyToken'],
                         'messages' => array(
-                            array(
-                                'type' => 'text',
-                                'text' => '讓我想想喔...'
-                            ),
+                            
                             array(
                                 'type' => 'text',
                                 'text' => $r_message

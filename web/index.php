@@ -31,16 +31,16 @@ foreach ($client->parseEvents() as $event) {
             switch ($message['type']) {
                 case 'text':
                 	$m_message = $message['text'];
-                    $r_message='嗨！毛毛'.unichr(0x100037).'~'.unichr(\n).'你是來領取點數的嗎？要跟我說通關密語哦';
+                    $r_message='嗨！毛毛'.unichr(0x100037).'~你是來領取點數的嗎？要跟我說通關密語哦';
                         if( strpos( $message['text'], '點數' ) !== false || strpos( $message['text'], '查' ) !== false){
                             $count = file_get_contents("http://140.117.6.187/Analysis/FunctionDisplay/linebot_get_point.php");
                             $r_message='毛毛現在總共有 '.$count.' 點!!!'.unichr(0x1000B6);
                             if($count>=3){
-                              $r_message.=urlencode(\n).'好誇喔喔喔'.unichr(0x100091);
+                              $r_message.=' 好誇喔喔喔'.unichr(0x100091);
                             }else if($count==0){
-                              $r_message.=urlencode(\n).'恩...多笑一點吧！'.unichr(0x10008E);
+                              $r_message.=' 恩...多笑一點吧！'.unichr(0x10008E);
                             }else{
-                              $r_message.=urlencode(\n).'繼續加油囉'.unichr(0x10008A);
+                              $r_message.=' 繼續加油囉'.unichr(0x10008A);
                             }
                             
                         }
@@ -49,9 +49,9 @@ foreach ($client->parseEvents() as $event) {
                             $add = file_get_contents("http://140.117.6.187/Analysis/FunctionDisplay/linebot_add_point.php");
                             $count = file_get_contents("http://140.117.6.187/Analysis/FunctionDisplay/linebot_get_point.php");
                             if($add=='ok'){
-                              $r_message='毛寶寶爭氣的獲得了1點&#100037'.urlencode(\n).'總共有 '.$count.'點了哦嘿嘿'.unichr(0x100022);
+                              $r_message='毛寶寶爭氣的獲得了1點~總共有 '.$count.'點了哦嘿嘿'.unichr(0x100022);
                             }else{
-                              $r_message='毛毛今天拿過點數了喔！'.urlencode(\n).unichr(0x10000E);
+                              $r_message='毛毛今天拿過點數了喔！這樣不乖內'.unichr(0x10000E);
                             }
                         }
 

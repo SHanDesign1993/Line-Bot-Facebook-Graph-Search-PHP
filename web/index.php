@@ -31,8 +31,7 @@ foreach ($client->parseEvents() as $event) {
             switch ($message['type']) {
                 case 'text':
                 	$m_message = $message['text'];
-                    $bin = hex2bin(str_repeat('0', 8 - strlen('100008')) . '100008');
-                    $emoticon =  mb_convert_encoding($bin, 'UTF-8', 'UTF-32BE');
+                    $emoticon='...';
                     $r_message='嗨！毛毛'.$emoticon.'~\n你是來領取點數的嗎？要跟我說通關密語哦';
                         if( strpos( $message['text'], '點數' ) !== false || strpos( $message['text'], '查' ) !== false){
                             $count = file_get_contents("http://140.117.6.187/Analysis/FunctionDisplay/linebot_get_point.php");

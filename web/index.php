@@ -28,13 +28,14 @@ foreach ($client->parseEvents() as $event) {
     switch ($event['type']) {
         case 'message':
             $message = $event['message'];
+            $userid =  $event['source']['userId'];
             switch ($message['type']) {
                 case 'text':
                 	$m_message = $message['text'];
                     $r_message='嗨！毛毛'.unichr(0x100037).'~你是來領取點數的嗎？要跟我說通關密語哦';
                     
                         if(strpos( $message['text'], 'who' ) !== false){
-                            $r_message = print_r($event, true);
+                            $r_message = $userid;
 
                         }
                         if( strpos( $message['text'], '點數' ) !== false || strpos( $message['text'], '查' ) !== false){

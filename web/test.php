@@ -15,20 +15,24 @@ $message_obj = [
   ]
 ];
 
+$post_obj=array(
+    'Content-Type: application/json',
+    'Authorization: Bearer '.$access_token,
+    //'Authorization: Bearer '. TOKEN
+    $message_obj
+);
+
 
 $ch = curl_init("https://api.line.me/v2/bot/message/push");
 curl_setopt($ch, CURLOPT_POST, true);
 curl_setopt($ch, CURLOPT_CUSTOMREQUEST, 'POST');
 curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
 curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode($post_data));
-curl_setopt($ch, CURLOPT_HTTPHEADER, array(
-    'Content-Type: application/json',
-    'Authorization: Bearer '.$access_token,
-    //'Authorization: Bearer '. TOKEN
-   $message_obj
-));
+curl_setopt($ch, CURLOPT_HTTPHEADER, $post_obj);
 
 $result = curl_exec($ch);
+print_r($post_obj);
+print_r($result);
 curl_close($ch);
 
    

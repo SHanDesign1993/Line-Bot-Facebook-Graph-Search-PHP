@@ -3,8 +3,7 @@ $count = file_get_contents("http://140.117.6.187/Analysis/FunctionDisplay/linebo
 //$add = file_get_contents("http://140.117.6.187/Analysis/FunctionDisplay/linebot_add_point.php");
 //$ex = file_get_contents("http://140.117.6.187/Analysis/FunctionDisplay/linebot_change_point.php");
 echo $count;
-$access_token = "VP7oYVhN1HwpIfvTmXhgNPQIelGQROm/WQ/dmouJ7iZRAjBgOyUNF9Aq+Y6Ds8hP1Ae5mglAhcJtaBpC7na5or3SqTqWudfWt1QPur/76ej40a3jg0wift89aYYpHSvTyohfP0yibnHLr/+Ge2F1LQdB04t89/1O/w1cDnyilFU=";
-
+$access_token = "VfcdUobfc4kKV+SbzTXQDOnvBjpFIkJqla35htny9vPB+3uVC9B5Dkwy6e6eSDGjbJQyHQMVk9+W9ALd7+Px4LcmAZMxoaE1Qyvgkzk0B99Q6vQCMusoUsjR6UHtZDHzgYrNY9OYzefblJvD7CxNCwdB04t89/1O/w1cDnyilFU=";
 $message_obj = [
   "to" => "Ue004c4797cf171301dccf7e7d8ef7d62",
   "messages" => [

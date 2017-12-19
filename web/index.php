@@ -118,6 +118,7 @@ input:active, .button:active {
 <div id="table">
 <div id="pizza">
 <form method="post" action="index.php">
+<input name="person" type="text" value="you" />
 <textarea name="comment" placeholder="Go crazy"></textarea>
 <input type="submit" value="Submit">
 <a class="button">Preview</a>
@@ -129,26 +130,7 @@ input:active, .button:active {
 </html>
 
 <?php
-
-/**
- * Copyright 2016 LINE Corporation
- *
- * LINE Corporation licenses this file to you under the Apache License,
- * version 2.0 (the "License"); you may not use this file except in compliance
- * with the License. You may obtain a copy of the License at:
- *
- *   https://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
- * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
- * License for the specific language governing permissions and limitations
- * under the License.
- */
-
 require_once('./LINEBotTiny.php');
-
-
 
 $channelAccessToken = getenv('LINE_CHANNEL_ACCESSTOKEN');
 $channelSecret = getenv('LINE_CHANNEL_SECRET');
@@ -157,9 +139,14 @@ $to_ya="Ua24ab88b9e3bfb642ff83ef4fc1cd893";
 
 
 $MESSAGE_TO_SEND = @$_POST['comment'];
+$PERSON_TO_SEND = @$_POST['person'];
 echo $MESSAGE_TO_SEND;
 if(isset($MESSAGE_TO_SEND)){
-    PushMessage($to_me,$MESSAGE_TO_SEND,$channelAccessToken);
+    if($PERSON_TO_SEND=="you"){
+        PushMessage($to_ya,$MESSAGE_TO_SEND,$channelAccessToken);
+    }else{
+        PushMessage($to_me,$MESSAGE_TO_SEND,$channelAccessToken);    
+    }
 }
 
 $client = new LINEBotTiny($channelAccessToken, $channelSecret);

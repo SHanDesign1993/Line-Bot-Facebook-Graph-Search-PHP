@@ -1,3 +1,133 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+    <title>LINE PushMessager</title>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+    <meta content='width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0' name='viewport' />
+</head>
+<style>
+@import url(https://fonts.googleapis.com/css?family=Open+Sans:400italic,700italic,400,700,600);
+* {
+  outline:none;
+}
+body {
+  background-image: url(http://subtlepatterns.subtlepatterns.netdna-cdn.com/patterns/debut_dark.png);
+  background-color:#333;
+  font-family: 'Open Sans', sans-serif;
+}
+#pizza {
+  width:600px;
+  margin: 0;
+  background-image:url(https://subtlepatterns.com/patterns/purty_wood.png);
+  box-sizing:border-box;
+  padding: 24px 30px 14px 30px;
+  border-radius:8px 8px 0 0;
+  background-color:#EAC995;
+  border:1px solid #EAC995;
+  box-shadow: inset 0 0 20px rgba(0,0,0,0.4);
+}
+textarea {
+  box-sizing:border-box;
+  width:100%;
+  min-width:100%;
+  max-width:100%;
+  border-radius:4px;
+  border:none;
+  height:100px;
+  box-shadow:inset 0 0 14px rgba(0,0,0,0.2), 0 0 14px rgba(0,0,0,0.2);
+  padding:8px;
+  font-size:14px;
+  color:#444;
+  font-family: 'Courier New', 'Courier', monospace;
+  transition: box-shadow 0.2s ease;
+}
+textarea:focus {
+  box-shadow:inset 0 0 16px rgba(0,0,0,0.24), 0 0 14px rgba(0,0,0,0.2); 
+}
+input, .button {
+  margin-top:10px;
+  border:none;
+  margin-right:10px;
+  display: block;
+  float:left;
+  background-color: #1B79C7;
+  line-height: 1;
+  padding: 6px 20px 6px 20px;
+  color: white;
+  text-shadow: 0px -1px 0px #0C3658;
+  border-radius: 4px;
+  box-shadow: 0px 3px 0px #0C3658, 0px 3px 14px rgba(0,0,0,0.6);
+  transition: background-color 0.1s ease;
+  font-family: 'Open Sans', sans-serif;
+  font-weight:600;
+  font-size:14px;
+  text-decoration:none !important;
+  cursor:pointer;
+  position:relative;
+}
+input:hover, .button:hover {
+  background-color: #2E92E2;
+}
+input:active, .button:active {  
+  bottom: -2px;
+  box-shadow: 0px 1px 0px #0C3658, 0px 2px 14px rgba(0,0,0,0.6);
+  color: white;
+}
+#hamburger {
+  width:600px;
+  margin:0;
+  box-sizing:border-box;
+  padding: 20px 30px 20px 30px;
+  border-radius:0 0 8px 8px;
+  background-color:#444;
+  border:1px solid #444;
+  box-shadow: inset 0 0 20px rgba(0,0,0,0.4);
+  background-image:url(http://subtlepatterns.subtlepatterns.netdna-cdn.com/patterns/low_contrast_linen.png);
+  color:#FFF;
+  text-shadow:0px 1px 5px #000;
+  font-size:14px;
+}
+#table {
+  width:600px;
+  margin:40px auto 20px auto;
+  border-radius:8px;
+  box-shadow: 0px 2px 20px rgba(0,0,0,0.5);
+}
+#pizza:after {
+    content: '';
+    display: table;
+    clear: both;
+}
+#table a {
+  color:#FFF;
+  text-decoration:underline;
+}
+</style>
+<script language=JavaScript>
+    $( document ).ready(function() {
+        $('.button').click(function () {
+            $('#hamburger').html($('textarea').val());
+        });
+        $('textarea').autosize();
+    });
+</script>
+<body>
+<div id="table">
+<div id="pizza">
+<form method="post" action="index.php">
+<textarea name="comment" placeholder="Go crazy"></textarea>
+<input type="submit" value="Submit">
+<a class="button">Preview</a>
+</form>
+</div>
+<div id="hamburger"> 
+</div>
+</body>
+</html>
+
 <?php
 
 /**
@@ -25,37 +155,38 @@ $channelSecret = getenv('LINE_CHANNEL_SECRET');
 $to_me="U4a26dead451bc002afd416b24050216c";
 $to_ya="Ua24ab88b9e3bfb642ff83ef4fc1cd893";
 
+
+$MESSAGE_TO_SEND = @$_POST['comment'];
+echo $MESSAGE_TO_SEND;
+if(isset($MESSAGE_TO_SEND)){
+    PushMessage($to_me,$MESSAGE_TO_SEND,$channelAccessToken);
+}
+
 $client = new LINEBotTiny($channelAccessToken, $channelSecret);
+
 foreach ($client->parseEvents() as $event) {
     switch ($event['type']) {
         case 'message':
             $message = $event['message'];
             $userid =  $event['source']['userId'];
             switch ($message['type']) {
+                 /* text message */
                 case 'text':
                     $m_message = $message['text'];
-                    if($userid==$to_me){
-                        //me 
-                        PushMessage($to_ya,$m_message);
-                    }else if($userid==$to_ya){
-                        //you talk
-                        PushMessage($to_me,$m_message);
-                    }
-
-
                     $r_message=''; 
-                    
+
+                    if($userid==$to_ya){
+                        //you talk
+                        PushMessage($to_me,$m_message,$channelAccessToken);
+
+                        /* identity */
                         if(strpos( $message['text'], 'who' ) !== false){
                             //$r_message = print_r($event['source'],true);
-                            if($userid==$to_me){
-                                $r_message="你是漢寶";
-
-                            }else if($userid=="$to_ya"){
-                                $r_message="你是毛毛";
-                            }
-
+                            $r_message="你是毛毛";
                         }
-                        if( strpos( $message['text'], '點數' ) !== false || strpos( $message['text'], '查' ) !== false){
+                        /* check point */
+                        else if( strpos( $message['text'], '點數' ) !== false || strpos( $message['text'], '查' ) !== false)
+                        {
                             $count = file_get_contents("http://140.117.6.187/Analysis/FunctionDisplay/linebot_get_point.php");
                             $r_message='毛毛現在總共有 '.$count.' 點!!!'.unichr(0x1000B6);
                             if($count>=3){
@@ -64,11 +195,11 @@ foreach ($client->parseEvents() as $event) {
                               $r_message.=' 恩...多笑一點吧！'.unichr(0x10008E);
                             }else{
                               $r_message.=' 繼續加油囉'.unichr(0x10008A);
-                            }
-                            
+                            } 
                         }
-
-                        if( strpos( $message['text'], '我愛你' ) !== false || strpos( $message['text'], 'ok' ) !== false){
+                        /* get point */
+                        else if( strpos( $message['text'], '我愛你' ) !== false || strpos( $message['text'], 'ok' ) !== false)
+                        {
                             $add = file_get_contents("http://140.117.6.187/Analysis/FunctionDisplay/linebot_add_point.php");
                             $count = file_get_contents("http://140.117.6.187/Analysis/FunctionDisplay/linebot_get_point.php");
                             if($add=='ok'){
@@ -77,39 +208,33 @@ foreach ($client->parseEvents() as $event) {
                               $r_message='毛毛今天拿過點數了喔！這樣不乖內'.unichr(0x10000E);
                             }
                         }
+                    }
 
-                        if(strpos( $message['text'], '吃大餐' ) !== false && $userid==$to_me){
-                            $ex = file_get_contents("http://140.117.6.187/Analysis/FunctionDisplay/linebot_change_point.php");
-                            $count = file_get_contents("http://140.117.6.187/Analysis/FunctionDisplay/linebot_get_point.php");
- 
-                            $r_message='兌換成功！ (left '.$count.' pts)';
-                        }
-
-                        if(strpos( $message['text'], '吃大餐' ) !== false && $userid==$to_me){
-                            $count = file_get_contents("http://140.117.6.187/Analysis/FunctionDisplay/linebot_get_point.php");
-                            $r_message='現在總共有 '.$count;
-                        }
-                  
                 	if($m_message!="")
                 	{
                 		$client->replyMessage(array(
                         'replyToken' => $event['replyToken'],
                         'messages' => array(
-                            
                             array(
                                 'type' => 'text',
                                 'text' => $r_message
                             )
                         )
                         ));
-                        
-                        //send to me
-                        //PushMessage($to_me,$r_message);
                 	}
-                    break;
+                break;
+                /* sticker message */
+                case 'sticker':
+                if($userid==$to_ya){
+                    $r_message='貼圖訊息';
+                    PushMessage($to_me,$r_message,$channelAccessToken);
+                }
+                
+                break;
                 
             }
             break;
+            
         default:
             error_log("Unsupporeted event type: " . $event['type']);
             break;
@@ -120,13 +245,19 @@ function unichr($i) {
     return iconv('UCS-4LE', 'UTF-8', pack('V', $i));
 }
 
-function PushMessage($to,$text){
+function ChangePoints(){
+    $ex = file_get_contents("http://140.117.6.187/Analysis/FunctionDisplay/linebot_change_point.php");
+    $count = file_get_contents("http://140.117.6.187/Analysis/FunctionDisplay/linebot_get_point.php");
+    $r_message='successfully done! (left '.$count.' pts)';
+}
+
+function PushMessage($to,$text,$channelAccessToken){
     $message_obj = [
         "to" => $to,
         "messages" => [
           [
             "type" => "text",
-            "text" => "說：".$text
+            "text" => $text
           ]
         ]
       ];
@@ -134,7 +265,7 @@ function PushMessage($to,$text){
       curl_setopt($curl, CURLOPT_URL, "https://api.line.me/v2/bot/message/push") ;
       curl_setopt($curl, CURLOPT_HEADER, true);
       curl_setopt($curl, CURLOPT_CUSTOMREQUEST, "POST");
-      curl_setopt($curl, CURLOPT_HTTPHEADER, array("Content-Type: application/json;charset=UTF-8 ", "Authorization: Bearer " . $CHANNEL_ACCESS_TOKEN));
+      curl_setopt($curl, CURLOPT_HTTPHEADER, array("Content-Type: application/json;charset=UTF-8 ", "Authorization: Bearer " . $channelAccessToken));
       curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
       curl_setopt($curl, CURLOPT_POSTFIELDS, json_encode($message_obj));
       curl_exec($curl);  

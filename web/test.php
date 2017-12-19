@@ -4,6 +4,7 @@ $count = file_get_contents("http://140.117.6.187/Analysis/FunctionDisplay/linebo
 //$ex = file_get_contents("http://140.117.6.187/Analysis/FunctionDisplay/linebot_change_point.php");
 echo $count;
 $access_token = "VfcdUobfc4kKV+SbzTXQDOnvBjpFIkJqla35htny9vPB+3uVC9B5Dkwy6e6eSDGjbJQyHQMVk9+W9ALd7+Px4LcmAZMxoaE1Qyvgkzk0B99Q6vQCMusoUsjR6UHtZDHzgYrNY9OYzefblJvD7CxNCwdB04t89/1O/w1cDnyilFU=";
+
 $message_obj = [
   "to" => "Ue004c4797cf171301dccf7e7d8ef7d62",
   "messages" => [

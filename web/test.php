@@ -32,7 +32,7 @@ curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
 
 $result = curl_exec($ch);
 echo "</br>";
-echo($headers);
+print_r($headers);
 echo "</br>";
 print_r(json_encode($message_obj));
 echo "</br>";

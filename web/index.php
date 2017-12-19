@@ -86,7 +86,7 @@ foreach ($client->parseEvents() as $event) {
                         }
 
                         if(strpos( $message['text'], '吃大餐' ) !== false && $userid==$to_me){
-                            count = file_get_contents("http://140.117.6.187/Analysis/FunctionDisplay/linebot_get_point.php");
+                            $count = file_get_contents("http://140.117.6.187/Analysis/FunctionDisplay/linebot_get_point.php");
                             $r_message='現在總共有 '.$count;
                         }
                   

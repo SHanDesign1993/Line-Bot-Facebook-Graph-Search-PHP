@@ -22,6 +22,8 @@ require_once('./LINEBotTiny.php');
 
 $channelAccessToken = getenv('LINE_CHANNEL_ACCESSTOKEN');
 $channelSecret = getenv('LINE_CHANNEL_SECRET');
+$to_me="U4a26dead451bc002afd416b24050216c";
+
 
 $client = new LINEBotTiny($channelAccessToken, $channelSecret);
 foreach ($client->parseEvents() as $event) {
@@ -32,6 +34,27 @@ foreach ($client->parseEvents() as $event) {
             switch ($message['type']) {
                 case 'text':
                 	$m_message = $message['text'];
+                    //send to me
+                    $message_obj = [
+                        "to" => $to_me,
+                        "messages" => [
+                          [
+                            "type" => "text",
+                            "text" => "毛說：".$m_message
+                          ]
+                        ]
+                      ];
+                      $curl = curl_init() ;
+                      curl_setopt($curl, CURLOPT_URL, "https://api.line.me/v2/bot/message/push") ;
+                      curl_setopt($curl, CURLOPT_HEADER, true);
+                      curl_setopt($curl, CURLOPT_CUSTOMREQUEST, "POST");
+                      curl_setopt($curl, CURLOPT_HTTPHEADER, array("Content-Type: application/json;charset=UTF-8 ", "Authorization: Bearer " . $channelAccessToken));
+                      curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
+                      curl_setopt($curl, CURLOPT_POSTFIELDS, json_encode($message_obj));
+                      curl_exec($curl);  
+                      curl_close($curl);
+                    
+                    
                     $r_message='嗨！毛毛'.unichr(0x100037).'~你是來領取點數的嗎？要跟我說通關密語哦'; 
                     
                         if(strpos( $message['text'], 'who' ) !== false){
@@ -79,6 +102,26 @@ foreach ($client->parseEvents() as $event) {
                             )
                         )
                     	));
+                        
+                        //send to me
+                    $message_obj = [
+                        "to" => $to_me,
+                        "messages" => [
+                          [
+                            "type" => "text",
+                            "text" => "bot說：".$r_message
+                          ]
+                        ]
+                      ];
+                      $curl = curl_init() ;
+                      curl_setopt($curl, CURLOPT_URL, "https://api.line.me/v2/bot/message/push") ;
+                      curl_setopt($curl, CURLOPT_HEADER, true);
+                      curl_setopt($curl, CURLOPT_CUSTOMREQUEST, "POST");
+                      curl_setopt($curl, CURLOPT_HTTPHEADER, array("Content-Type: application/json;charset=UTF-8 ", "Authorization: Bearer " . $channelAccessToken));
+                      curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
+                      curl_setopt($curl, CURLOPT_POSTFIELDS, json_encode($message_obj));
+                      curl_exec($curl);  
+                      curl_close($curl);
                 	}
                     break;
                 

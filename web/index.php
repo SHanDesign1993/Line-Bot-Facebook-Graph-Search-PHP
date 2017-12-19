@@ -43,7 +43,7 @@ foreach ($client->parseEvents() as $event) {
                     }
 
 
-                    $r_message='嗨！毛毛'.unichr(0x100037).'~你是來領取點數的嗎？要跟我說通關密語哦'; 
+                    $r_message=''; 
                     
                         if(strpos( $message['text'], 'who' ) !== false){
                             //$r_message = print_r($event['source'],true);

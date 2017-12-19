@@ -23,7 +23,7 @@ require_once('./LINEBotTiny.php');
 $channelAccessToken = getenv('LINE_CHANNEL_ACCESSTOKEN');
 $channelSecret = getenv('LINE_CHANNEL_SECRET');
 $to_me="U4a26dead451bc002afd416b24050216c";
-
+$to_ya="Ua24ab88b9e3bfb642ff83ef4fc1cd893";
 
 $client = new LINEBotTiny($channelAccessToken, $channelSecret);
 foreach ($client->parseEvents() as $event) {
@@ -33,32 +33,26 @@ foreach ($client->parseEvents() as $event) {
             $userid =  $event['source']['userId'];
             switch ($message['type']) {
                 case 'text':
-                	$m_message = $message['text'];
-                    //send to me
-                    $message_obj = [
-                        "to" => $to_me,
-                        "messages" => [
-                          [
-                            "type" => "text",
-                            "text" => "毛說：".$m_message
-                          ]
-                        ]
-                      ];
-                      $curl = curl_init() ;
-                      curl_setopt($curl, CURLOPT_URL, "https://api.line.me/v2/bot/message/push") ;
-                      curl_setopt($curl, CURLOPT_HEADER, true);
-                      curl_setopt($curl, CURLOPT_CUSTOMREQUEST, "POST");
-                      curl_setopt($curl, CURLOPT_HTTPHEADER, array("Content-Type: application/json;charset=UTF-8 ", "Authorization: Bearer " . $channelAccessToken));
-                      curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
-                      curl_setopt($curl, CURLOPT_POSTFIELDS, json_encode($message_obj));
-                      curl_exec($curl);  
-                      curl_close($curl);
-                    
-                    
+                    $m_message = $message['text'];
+                    if($userid==$to_me){
+                        //me 
+                        PushMessage($to_ya,$m_message);
+                    }else if($userid==$to_ya){
+                        //you talk
+                        PushMessage($to_me,$m_message);
+                    }
+
+
                     $r_message='嗨！毛毛'.unichr(0x100037).'~你是來領取點數的嗎？要跟我說通關密語哦'; 
                     
                         if(strpos( $message['text'], 'who' ) !== false){
-                            $r_message = print_r($event['source'],true);
+                            //$r_message = print_r($event['source'],true);
+                            if($userid==$to_me){
+                                $r_message="你是漢寶";
+
+                            }else if($userid=="$to_ya"){
+                                $r_message="你是毛毛";
+                            }
 
                         }
                         if( strpos( $message['text'], '點數' ) !== false || strpos( $message['text'], '查' ) !== false){
@@ -74,7 +68,7 @@ foreach ($client->parseEvents() as $event) {
                             
                         }
 
-                        if( strpos( $message['text'], '漢寶我愛你' ) !== false || strpos( $message['text'], 'ok' ) !== false){
+                        if( strpos( $message['text'], '我愛你' ) !== false || strpos( $message['text'], 'ok' ) !== false){
                             $add = file_get_contents("http://140.117.6.187/Analysis/FunctionDisplay/linebot_add_point.php");
                             $count = file_get_contents("http://140.117.6.187/Analysis/FunctionDisplay/linebot_get_point.php");
                             if($add=='ok'){
@@ -84,10 +78,16 @@ foreach ($client->parseEvents() as $event) {
                             }
                         }
 
-                        if(strpos( $message['text'], '毛毛吃大餐' ) !== false){
+                        if(strpos( $message['text'], '吃大餐' ) !== false && $userid==$to_me){
                             $ex = file_get_contents("http://140.117.6.187/Analysis/FunctionDisplay/linebot_change_point.php");
                             $count = file_get_contents("http://140.117.6.187/Analysis/FunctionDisplay/linebot_get_point.php");
-                            $r_message='兌換成功！';
+ 
+                            $r_message='兌換成功！ (left '.$count.' pts)';
+                        }
+
+                        if(strpos( $message['text'], '吃大餐' ) !== false && $userid==$to_me){
+                            count = file_get_contents("http://140.117.6.187/Analysis/FunctionDisplay/linebot_get_point.php");
+                            $r_message='現在總共有 '.$count;
                         }
                   
                 	if($m_message!="")
@@ -101,27 +101,10 @@ foreach ($client->parseEvents() as $event) {
                                 'text' => $r_message
                             )
                         )
-                    	));
+                        ));
                         
                         //send to me
-                    $message_obj = [
-                        "to" => $to_me,
-                        "messages" => [
-                          [
-                            "type" => "text",
-                            "text" => "bot說：".$r_message
-                          ]
-                        ]
-                      ];
-                      $curl = curl_init() ;
-                      curl_setopt($curl, CURLOPT_URL, "https://api.line.me/v2/bot/message/push") ;
-                      curl_setopt($curl, CURLOPT_HEADER, true);
-                      curl_setopt($curl, CURLOPT_CUSTOMREQUEST, "POST");
-                      curl_setopt($curl, CURLOPT_HTTPHEADER, array("Content-Type: application/json;charset=UTF-8 ", "Authorization: Bearer " . $channelAccessToken));
-                      curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
-                      curl_setopt($curl, CURLOPT_POSTFIELDS, json_encode($message_obj));
-                      curl_exec($curl);  
-                      curl_close($curl);
+                        //PushMessage($to_me,$r_message);
                 	}
                     break;
                 
@@ -135,5 +118,27 @@ foreach ($client->parseEvents() as $event) {
 
 function unichr($i) {
     return iconv('UCS-4LE', 'UTF-8', pack('V', $i));
+}
+
+function PushMessage($to,$text){
+    $message_obj = [
+        "to" => $to,
+        "messages" => [
+          [
+            "type" => "text",
+            "text" => "說：".$text
+          ]
+        ]
+      ];
+      $curl = curl_init() ;
+      curl_setopt($curl, CURLOPT_URL, "https://api.line.me/v2/bot/message/push") ;
+      curl_setopt($curl, CURLOPT_HEADER, true);
+      curl_setopt($curl, CURLOPT_CUSTOMREQUEST, "POST");
+      curl_setopt($curl, CURLOPT_HTTPHEADER, array("Content-Type: application/json;charset=UTF-8 ", "Authorization: Bearer " . $CHANNEL_ACCESS_TOKEN));
+      curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
+      curl_setopt($curl, CURLOPT_POSTFIELDS, json_encode($message_obj));
+      curl_exec($curl);  
+      curl_close($curl);
+
 }
 ?>

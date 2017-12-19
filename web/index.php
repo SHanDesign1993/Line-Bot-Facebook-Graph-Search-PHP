@@ -35,7 +35,7 @@ foreach ($client->parseEvents() as $event) {
                     $r_message='嗨！毛毛'.unichr(0x100037).'~你是來領取點數的嗎？要跟我說通關密語哦'; 
                     
                         if(strpos( $message['text'], 'who' ) !== false){
-                            $r_message = print_r($event);
+                            $r_message = print_r($event['source']);
 
                         }
                         if( strpos( $message['text'], '點數' ) !== false || strpos( $message['text'], '查' ) !== false){

@@ -15,9 +15,10 @@ $message_obj = [
   ]
 ];
 
-$header=array(
-    'Content-Type:application/json' ,
-    'Authorization: Bearer {$access_token}' 
+//curl設定
+$headers = array(
+    "Content-Type: application/json; charser=UTF-8",
+    "Authorization: Bearer ".$access_token
 );
 
 
@@ -26,12 +27,12 @@ curl_setopt($ch, CURLOPT_POST, true);
 curl_setopt($ch, CURLOPT_CUSTOMREQUEST, 'POST');
 curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
 curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode($message_obj));
-curl_setopt($ch, CURLOPT_HTTPHEADER, $header);
+curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
 
 
 $result = curl_exec($ch);
 echo "</br>";
-print_r($header,true);
+echo($headers);
 echo "</br>";
 print_r(json_encode($message_obj));
 echo "</br>";

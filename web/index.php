@@ -18,11 +18,6 @@ body {
   background-color:#333;
   font-family: 'Open Sans', sans-serif;
 }
-#echofont{
-  color: white;
-  font-weight:600;
-  font-size:14px;
-}
 #pizza {
   width:600px;
   margin: 0;
@@ -81,6 +76,11 @@ input:active, .button:active {
   box-shadow: 0px 1px 0px #0C3658, 0px 2px 14px rgba(0,0,0,0.6);
   color: white;
 }
+#wfont{
+  color: white;
+  font-weight:600;
+  font-size:14px;
+}
 #hamburger {
   width:600px;
   margin:0;
@@ -117,39 +117,6 @@ input:active, .button:active {
             $('#hamburger').html($('textarea').val());
         });
         $('textarea').autosize();
-        $('#exchange').click(function () {
-             jQuery.ajax({
-                type: "POST",
-                url: 'index.php',
-                dataType: 'json',
-                data: {functionname: 'exchange'},
-                success: function (obj, textstatus) {
-                      if( !('error' in obj) ) {
-                          console.log(obj.result);
-                      }
-                      else {
-                          console.log(obj.error);
-                      }
-                }
-            });
-        });
-        
-        $('#food').click(function () {
-             jQuery.ajax({
-                type: "POST",
-                url: 'index.php',
-                dataType: 'json',
-                data: {functionname: 'food',search: $('#comment').val()},
-                success: function (obj, textstatus) {
-                      if( !('error' in obj) ) {
-                          console.log(obj.result);
-                      }
-                      else {
-                          console.log(obj.error);
-                      }
-                }
-            });
-        });
     });
 </script>
 <body>
@@ -157,7 +124,7 @@ input:active, .button:active {
 <div id="pizza">
 <form method="post" action="index.php">
 <input name="person" type="text" value="you" />
-<textarea id="comment" name="comment" placeholder="Go crazy"></textarea>
+<textarea name="comment" id="comment" placeholder="Go crazy"></textarea>
 <input type="submit" value="Submit">
 <a class="button">Preview</a>
 <a class="button" id="exchange">Exchange Points</a>
@@ -170,7 +137,6 @@ input:active, .button:active {
 </html>
 
 <?php
-header('Content-Type: application/json');    
 require_once('./LINEBotTiny.php');
 $channelAccessToken = getenv('LINE_CHANNEL_ACCESSTOKEN');
 $channelSecret = getenv('LINE_CHANNEL_SECRET');
@@ -178,33 +144,16 @@ $to_me="U4a26dead451bc002afd416b24050216c";
 $to_ya="Ua24ab88b9e3bfb642ff83ef4fc1cd893";
 $MESSAGE_TO_SEND = @$_POST['comment'];
 $PERSON_TO_SEND = @$_POST['person'];
+
 if(isset($MESSAGE_TO_SEND)){
     if($PERSON_TO_SEND=="you"){
         PushMessage($to_ya,$MESSAGE_TO_SEND,$channelAccessToken);
     }else{
         PushMessage($to_me,$MESSAGE_TO_SEND,$channelAccessToken);    
     }
-    echo "<span id='echofont'>訊息：".$MESSAGE_TO_SEND." 成功發送!</span>";
+    echo "<span id='wfont'>訊息：".$MESSAGE_TO_SEND." 成功發送!</span>";
 }
-$ajaxResult = array();
-if( !isset(@$_POST['functionname']) ) { $ajaxResult['error'] = 'No function name!'; }
-if( !isset($ajaxResult['error']) ) {
-    switch(@$_POST['functionname']) 
-    {
-       case 'exchange':
-           ChangePoints();
-       break;
-       case 'food':
-           if(isset(@$_POST['search'])){
-               PushFood($to_me,@$_POST['search']);
-           }
-       break;
-            
-       default:   
-           $ajaxResult['error'] = 'Not found '.@$_POST['functionname'].'. run PushMessage function!';
-       break;
-     }
-}
+    
 $client = new LINEBotTiny($channelAccessToken, $channelSecret);
 foreach ($client->parseEvents() as $event) {
     switch ($event['type']) {
@@ -285,8 +234,27 @@ function unichr($i) {
 function ChangePoints(){
     $ex = file_get_contents("http://140.117.6.187/Analysis/FunctionDisplay/linebot_change_point.php");
     $count = file_get_contents("http://140.117.6.187/Analysis/FunctionDisplay/linebot_get_point.php");
-    $text='successfully done! (left '.$count.' pts)';
-    PushMessage($to_me,$text,getenv('LINE_CHANNEL_ACCESSTOKEN'));
+    $r_message='successfully done! (left '.$count.' pts)';
+}
+function PushMessage($to,$text,$channelAccessToken){
+    $message_obj = [
+        "to" => $to,
+        "messages" => [
+          [
+            "type" => "text",
+            "text" => $text
+          ]
+        ]
+      ];
+      $curl = curl_init() ;
+      curl_setopt($curl, CURLOPT_URL, "https://api.line.me/v2/bot/message/push") ;
+      curl_setopt($curl, CURLOPT_HEADER, true);
+      curl_setopt($curl, CURLOPT_CUSTOMREQUEST, "POST");
+      curl_setopt($curl, CURLOPT_HTTPHEADER, array("Content-Type: application/json;charset=UTF-8 ", "Authorization: Bearer " . $channelAccessToken));
+      curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
+      curl_setopt($curl, CURLOPT_POSTFIELDS, json_encode($message_obj));
+      curl_exec($curl);  
+      curl_close($curl);
 }
     
 function PushFood($to,$search){
@@ -333,6 +301,7 @@ function PushFood($to,$search){
           ]
         ]
       ];
+      
       $curl = curl_init() ;
       curl_setopt($curl, CURLOPT_URL, "https://api.line.me/v2/bot/message/push") ;
       curl_setopt($curl, CURLOPT_HEADER, true);
@@ -342,25 +311,6 @@ function PushFood($to,$search){
       curl_setopt($curl, CURLOPT_POSTFIELDS, json_encode($message_obj));
       curl_exec($curl);  
       curl_close($curl);
-}
-function PushMessage($to,$text,$channelAccessToken){
-    $message_obj = [
-        "to" => $to,
-        "messages" => [
-          [
-            "type" => "text",
-            "text" => $text
-          ]
-        ]
-      ];
-      $curl = curl_init() ;
-      curl_setopt($curl, CURLOPT_URL, "https://api.line.me/v2/bot/message/push") ;
-      curl_setopt($curl, CURLOPT_HEADER, true);
-      curl_setopt($curl, CURLOPT_CUSTOMREQUEST, "POST");
-      curl_setopt($curl, CURLOPT_HTTPHEADER, array("Content-Type: application/json;charset=UTF-8 ", "Authorization: Bearer " . $channelAccessToken));
-      curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
-      curl_setopt($curl, CURLOPT_POSTFIELDS, json_encode($message_obj));
-      curl_exec($curl);  
-      curl_close($curl);
-}
+}    
+    
 ?>

@@ -307,7 +307,7 @@ function PushFood($to,$search){
     $data = json_decode($json, true);
     $result = array();
     
-    print_r($data);
+    //print_r($data);
  
     foreach ($data['feed']['entry'] as $item) {
       $keywords = explode(',', $item['gsx$keyword']['$t']);
@@ -325,7 +325,7 @@ function PushFood($to,$search){
                 ),
               ),
             );
-            print_r($candidate);
+            //print_r($candidate);
             array_push($result, $candidate);
         }
       }
@@ -353,7 +353,7 @@ function PushFood($to,$search){
     
       print_r($message_obj);
     
-      print_r(json_encode($message_obj));
+      echo json_encode($message_obj);
       
       $curl = curl_init() ; 
       curl_setopt($curl, CURLOPT_URL, "https://api.line.me/v2/bot/message/push") ;
@@ -363,7 +363,7 @@ function PushFood($to,$search){
       curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
       curl_setopt($curl, CURLOPT_POSTFIELDS, json_encode($message_obj));
       $r=curl_exec($curl);  
-    echo $r;
+      echo $r;
       curl_close($curl);
 }    
     

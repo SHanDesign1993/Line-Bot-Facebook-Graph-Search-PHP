@@ -13,10 +13,16 @@
 * {
   outline:none;
 }
+
 body {
   background-image: url(http://subtlepatterns.subtlepatterns.netdna-cdn.com/patterns/debut_dark.png);
   background-color:#333;
   font-family: 'Open Sans', sans-serif;
+}
+span{
+  color: white;
+  font-weight:600;
+  font-size:14px;
 }
 #pizza {
   width:600px;
@@ -112,6 +118,40 @@ input:active, .button:active {
             $('#hamburger').html($('textarea').val());
         });
         $('textarea').autosize();
+        $('#exchange').click(function () {
+             jQuery.ajax({
+                type: "POST",
+                url: 'index.php',
+                dataType: 'json',
+                data: {functionname: 'exchange'},
+                success: function (obj, textstatus) {
+                      if( !('error' in obj) ) {
+                          console.log(obj.result);
+                      }
+                      else {
+                          console.log(obj.error);
+                      }
+                }
+            });
+        });
+        
+        $('#food').click(function () {
+             jQuery.ajax({
+                type: "POST",
+                url: 'index.php',
+                dataType: 'json',
+                data: {functionname: 'food',search: $('#comment').val()},
+                success: function (obj, textstatus) {
+                      if( !('error' in obj) ) {
+                          console.log(obj.result);
+                      }
+                      else {
+                          console.log(obj.error);
+                      }
+                }
+            });
+        });
+
     });
 </script>
 <body>
@@ -119,9 +159,11 @@ input:active, .button:active {
 <div id="pizza">
 <form method="post" action="index.php">
 <input name="person" type="text" value="you" />
-<textarea name="comment" placeholder="Go crazy"></textarea>
+<textarea id="comment" name="comment" placeholder="Go crazy"></textarea>
 <input type="submit" value="Submit">
 <a class="button">Preview</a>
+<a class="button" id="exchange">Exchange Points</a>
+<a class="button" id="food">Push Food</a>
 </form>
 </div>
 <div id="hamburger"> 
@@ -130,6 +172,7 @@ input:active, .button:active {
 </html>
 
 <?php
+header('Content-Type: application/json');    
 require_once('./LINEBotTiny.php');
 
 $channelAccessToken = getenv('LINE_CHANNEL_ACCESSTOKEN');
@@ -140,13 +183,33 @@ $to_ya="Ua24ab88b9e3bfb642ff83ef4fc1cd893";
 
 $MESSAGE_TO_SEND = @$_POST['comment'];
 $PERSON_TO_SEND = @$_POST['person'];
-echo $MESSAGE_TO_SEND;
 if(isset($MESSAGE_TO_SEND)){
     if($PERSON_TO_SEND=="you"){
         PushMessage($to_ya,$MESSAGE_TO_SEND,$channelAccessToken);
     }else{
         PushMessage($to_me,$MESSAGE_TO_SEND,$channelAccessToken);    
     }
+    echo "<span>訊息：".$MESSAGE_TO_SEND." 成功發送!</span>";
+}
+$ajaxResult = array();
+if( !isset(@$_POST['functionname']) ) { $aResult['error'] = 'No function name!'; }
+if( !isset($ajaxResult['error']) ) {
+    switch(@$_POST['functionname']) 
+    {
+       case 'exchange':
+           ChangePoints();
+       break;
+
+       case 'food':
+           if(isset(@$_POST['search'])){
+               PushFood($to_me,@$_POST['search']);
+           }
+       break;
+            
+       default:   
+           $ajaxResult['error'] = 'Not found '.@$_POST['functionname'].'. run PushMessage function!';
+       break;
+     }
 }
 
 $client = new LINEBotTiny($channelAccessToken, $channelSecret);
@@ -235,7 +298,63 @@ function unichr($i) {
 function ChangePoints(){
     $ex = file_get_contents("http://140.117.6.187/Analysis/FunctionDisplay/linebot_change_point.php");
     $count = file_get_contents("http://140.117.6.187/Analysis/FunctionDisplay/linebot_get_point.php");
-    $r_message='successfully done! (left '.$count.' pts)';
+    $text='successfully done! (left '.$count.' pts)';
+    PushMessage($to_me,$text,getenv('LINE_CHANNEL_ACCESSTOKEN'));
+}
+    
+function PushFood($to,$search){
+    $json = file_get_contents('https://spreadsheets.google.com/feeds/list/1tQCaj3LUVwH0tBuPrfBY2dOJuF-qzpYEdOqGdNvJRLc/od6/public/values?alt=json');
+    $data = json_decode($json, true);
+    $result = array();
+ 
+    foreach ($data['feed']['entry'] as $item) {
+      $keywords = explode(',', $item['gsx$keyword']['$t']);
+      foreach ($keywords as $keyword) {
+        if (mb_strpos($search, $keyword) !== false) {
+          $candidate = array(
+            'thumbnailImageUrl' => $item['gsx$photourl']['$t'],
+            'title' => $item['gsx$title']['$t'],
+            'text' => $item['gsx$title']['$t'],
+              'actions' => array(
+                array(
+                  'type' => 'uri',
+                  'label' => '查看詳情',
+                  'uri' => $item['gsx$url']['$t'],
+                ),
+              ),
+            );
+            array_push($result, $candidate);
+        }
+      }
+    }
+    
+    $message_obj = [
+        'to' => $to,
+        'messages' => [
+          [
+            'type' => 'template',
+            'altText' => '為您推薦下列美食：',
+            'template' => [
+                'type' => 'carousel',
+                'columns' => $result
+            ]
+          ],
+          [
+              'type' => 'sticker',
+              'packageId' => '1',
+              'stickerId' => '2',
+          ]
+        ]
+      ];
+      $curl = curl_init() ;
+      curl_setopt($curl, CURLOPT_URL, "https://api.line.me/v2/bot/message/push") ;
+      curl_setopt($curl, CURLOPT_HEADER, true);
+      curl_setopt($curl, CURLOPT_CUSTOMREQUEST, "POST");
+      curl_setopt($curl, CURLOPT_HTTPHEADER, array("Content-Type: application/json;charset=UTF-8 ", "Authorization: Bearer " . $channelAccessToken));
+      curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
+      curl_setopt($curl, CURLOPT_POSTFIELDS, json_encode($message_obj));
+      curl_exec($curl);  
+      curl_close($curl);
 }
 
 function PushMessage($to,$text,$channelAccessToken){

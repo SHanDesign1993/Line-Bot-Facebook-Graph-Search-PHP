@@ -306,9 +306,8 @@ function PushFood($to,$search){
     $json = file_get_contents('https://spreadsheets.google.com/feeds/list/1tQCaj3LUVwH0tBuPrfBY2dOJuF-qzpYEdOqGdNvJRLc/od6/public/values?alt=json');
     $data = json_decode($json, true);
     $result = array();
-    echo '</br>';
-    echo $data;
-    echo '</br>';
+    
+    print_r($data);
  
     foreach ($data['feed']['entry'] as $item) {
       $keywords = explode(',', $item['gsx$keyword']['$t']);
@@ -351,7 +350,9 @@ function PushFood($to,$search){
         ]
       ];
     
-      echo json_encode($message_obj);
+    print_r($message_obj);
+    
+      print_r(json_encode($message_obj));
       
       $curl = curl_init() ;
       curl_setopt($curl, CURLOPT_URL, "https://api.line.me/v2/bot/message/push") ;

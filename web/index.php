@@ -1,9 +1,9 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
     <meta charset="utf-8" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
-    <title>LINE PushMessager</title>
+    <title>LINE Push Center</title>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
     <meta content='width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0' name='viewport' />
 </head>
@@ -18,7 +18,7 @@ body {
   background-color:#333;
   font-family: 'Open Sans', sans-serif;
 }
-span{
+#wfont{
   color: white;
   font-weight:600;
   font-size:14px;
@@ -187,9 +187,9 @@ if(isset($MESSAGE_TO_SEND)){
     }else{
         PushMessage($to_me,$MESSAGE_TO_SEND,$channelAccessToken);    
     }
-    echo "<span>訊息：".$MESSAGE_TO_SEND." 成功發送!</span>";
+    echo "<span id='wfont'>訊息：".$MESSAGE_TO_SEND." 成功發送!</span>";
 }
-
+/*
 $ajaxResult = array();
 if( !isset(@$_POST['functionname']) ) { $ajaxResult['error'] = 'No function name!'; }
 if( !isset($ajaxResult['error']) ) {
@@ -210,6 +210,7 @@ if( !isset($ajaxResult['error']) ) {
        break;
      }
 }
+*/
 
 
 $client = new LINEBotTiny($channelAccessToken, $channelSecret);

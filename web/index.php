@@ -116,7 +116,7 @@ input:active, .button:active {
         $('.button').click(function () {
             $('#hamburger').html($('textarea').val());
         });
-        $('textarea').autosize();
+        //$('textarea').autosize();
         $('#exchange').click(function () {
              jQuery.ajax({
                 type: "POST",
@@ -189,7 +189,7 @@ if(isset($MESSAGE_TO_SEND)){
     }
     echo "<span>訊息：".$MESSAGE_TO_SEND." 成功發送!</span>";
 }
-/*
+
 $ajaxResult = array();
 if( !isset(@$_POST['functionname']) ) { $ajaxResult['error'] = 'No function name!'; }
 if( !isset($ajaxResult['error']) ) {
@@ -210,7 +210,7 @@ if( !isset($ajaxResult['error']) ) {
        break;
      }
 }
-*/
+
 
 $client = new LINEBotTiny($channelAccessToken, $channelSecret);
 

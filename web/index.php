@@ -270,7 +270,7 @@ foreach ($client->parseEvents() as $event) {
                         'messages' => array(
                             array(
                                 'type' => 'text',
-                                'text' => print_r($message)
+                                'text' => echo json_encode($message);
                             )
                         )
                         ));

@@ -116,7 +116,40 @@ input:active, .button:active {
         $('.button').click(function () {
             $('#hamburger').html($('textarea').val());
         });
-        $('textarea').autosize();
+        $('#exchange').click(function () {
+             jQuery.ajax({
+                type: "POST",
+                url: 'index.php',
+                dataType: 'json',
+                data: {functionname: 'exchange'},
+                success: function (obj, textstatus) {
+                      if( !('error' in obj) ) {
+                          console.log(obj.result);
+                      }
+                      else {
+                          console.log(obj.error);
+                      }
+                }
+            });
+        });
+        
+        $('#food').click(function () {
+             jQuery.ajax({
+                type: "POST",
+                url: 'index.php',
+                dataType: 'json',
+                data: {functionname: 'food',search: $('#comment').val()},
+                success: function (obj, textstatus) {
+                      if( !('error' in obj) ) {
+                          console.log(obj.result);
+                      }
+                      else {
+                          console.log(obj.error);
+                      }
+                }
+            });
+        });
+        //$('textarea').autosize();
     });
 </script>
 <body>

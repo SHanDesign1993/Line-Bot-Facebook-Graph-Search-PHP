@@ -117,10 +117,9 @@ input:active, .button:active {
             $('#hamburger').html($('textarea').val());
         });
         $('#exchange').click(function () {
-             jQuery.ajax({
+             $.ajax({
                 type: "POST",
                 url: 'index.php',
-                dataType: 'json',
                 data: {functionname: 'exchange'},
                 success: function (obj, textstatus) {
                       if( !('error' in obj) ) {
@@ -134,10 +133,10 @@ input:active, .button:active {
         });
         
         $('#food').click(function () {
-             jQuery.ajax({
+         
+             $.ajax({
                 type: "POST",
                 url: 'index.php',
-                dataType: 'json',
                 data: {functionname: 'food',search: $('#comment').val()},
                 success: function (obj, textstatus) {
                       if( !('error' in obj) ) {
@@ -170,7 +169,6 @@ input:active, .button:active {
 </html>
 
 <?php
-header('Content-Type: application/json');
 require_once('./LINEBotTiny.php');
 $channelAccessToken = getenv('LINE_CHANNEL_ACCESSTOKEN');
 $channelSecret = getenv('LINE_CHANNEL_SECRET');
@@ -181,7 +179,7 @@ $MESSAGE_TO_SEND = @$_POST['comment'];
 $PERSON_TO_SEND = @$_POST['person'];
 $FUNC_NAME = @$_POST['functionname'];
 $FUNC_KEY = @$_POST['search'];
-echo '</br>caught'.$FUNC_NAME.' and '.$FUNC_KEY;    
+   
 if(isset($MESSAGE_TO_SEND)){
     if($PERSON_TO_SEND=="you"){
         PushMessage($to_ya,$MESSAGE_TO_SEND,$channelAccessToken);
@@ -194,7 +192,7 @@ if(isset($MESSAGE_TO_SEND)){
 $ajaxResult = array();
 if(!isset($FUNC_NAME)){ $ajaxResult['error'] = 'No function name!'; }
 if(!isset($ajaxResult['error'])){
-    echo '</br>switching'.$FUNC_NAME;
+    echo '</br>switching'.$FUNC_NAME.' and '.$FUNC_KEY;
     switch($FUNC_NAME) 
     {
        case 'exchange':

@@ -1,9 +1,10 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
+
 <head>
     <meta charset="utf-8" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
-    <title>LINE Push Center</title>
+    <title>LINE PushMessager</title>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
     <meta content='width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0' name='viewport' />
 </head>
@@ -12,13 +13,12 @@
 * {
   outline:none;
 }
-
 body {
   background-image: url(http://subtlepatterns.subtlepatterns.netdna-cdn.com/patterns/debut_dark.png);
   background-color:#333;
   font-family: 'Open Sans', sans-serif;
 }
-#wfont{
+span{
   color: white;
   font-weight:600;
   font-size:14px;
@@ -116,7 +116,7 @@ input:active, .button:active {
         $('.button').click(function () {
             $('#hamburger').html($('textarea').val());
         });
-        //$('textarea').autosize();
+        $('textarea').autosize();
         $('#exchange').click(function () {
              jQuery.ajax({
                 type: "POST",
@@ -150,7 +150,6 @@ input:active, .button:active {
                 }
             });
         });
-
     });
 </script>
 <body>
@@ -170,15 +169,13 @@ input:active, .button:active {
 </body>
 </html>
 
-<?php    
+<?php
+header('Content-Type: application/json');    
 require_once('./LINEBotTiny.php');
-
 $channelAccessToken = getenv('LINE_CHANNEL_ACCESSTOKEN');
 $channelSecret = getenv('LINE_CHANNEL_SECRET');
 $to_me="U4a26dead451bc002afd416b24050216c";
 $to_ya="Ua24ab88b9e3bfb642ff83ef4fc1cd893";
-
-
 $MESSAGE_TO_SEND = @$_POST['comment'];
 $PERSON_TO_SEND = @$_POST['person'];
 if(isset($MESSAGE_TO_SEND)){
@@ -187,18 +184,16 @@ if(isset($MESSAGE_TO_SEND)){
     }else{
         PushMessage($to_me,$MESSAGE_TO_SEND,$channelAccessToken);    
     }
-    echo "<span id='wfont'>訊息：".$MESSAGE_TO_SEND." 成功發送!</span>";
+    echo "<span>訊息：".$MESSAGE_TO_SEND." 成功發送!</span>";
 }
-/*
 $ajaxResult = array();
-if( !isset(@$_POST['functionname']) ) { $ajaxResult['error'] = 'No function name!'; }
+if( !isset(@$_POST['functionname']) ) { $aResult['error'] = 'No function name!'; }
 if( !isset($ajaxResult['error']) ) {
     switch(@$_POST['functionname']) 
     {
        case 'exchange':
            ChangePoints();
        break;
-
        case 'food':
            if(isset(@$_POST['search'])){
                PushFood($to_me,@$_POST['search']);
@@ -210,11 +205,7 @@ if( !isset($ajaxResult['error']) ) {
        break;
      }
 }
-*/
-
-
 $client = new LINEBotTiny($channelAccessToken, $channelSecret);
-
 foreach ($client->parseEvents() as $event) {
     switch ($event['type']) {
         case 'message':
@@ -225,11 +216,9 @@ foreach ($client->parseEvents() as $event) {
                 case 'text':
                     $m_message = $message['text'];
                     $r_message=''; 
-
                     if($userid==$to_ya){
                         //you talk
                         PushMessage($to_me,$m_message,$channelAccessToken);
-
                         /* identity */
                         if(strpos( $message['text'], 'who' ) !== false){
                             //$r_message = print_r($event['source'],true);
@@ -260,7 +249,6 @@ foreach ($client->parseEvents() as $event) {
                             }
                         }
                     }
-
                 	if($m_message!="")
                 	{
                 		$client->replyMessage(array(
@@ -287,15 +275,13 @@ foreach ($client->parseEvents() as $event) {
             break;
             
         default:
-            echo "Unsupporeted event type: " . $event['type']);
+            error_log("Unsupporeted event type: " . $event['type']);
             break;
     }
 };
-
 function unichr($i) {
     return iconv('UCS-4LE', 'UTF-8', pack('V', $i));
 }
-
 function ChangePoints(){
     $ex = file_get_contents("http://140.117.6.187/Analysis/FunctionDisplay/linebot_change_point.php");
     $count = file_get_contents("http://140.117.6.187/Analysis/FunctionDisplay/linebot_get_point.php");
@@ -347,7 +333,6 @@ function PushFood($to,$search){
           ]
         ]
       ];
-      
       $curl = curl_init() ;
       curl_setopt($curl, CURLOPT_URL, "https://api.line.me/v2/bot/message/push") ;
       curl_setopt($curl, CURLOPT_HEADER, true);
@@ -358,7 +343,6 @@ function PushFood($to,$search){
       curl_exec($curl);  
       curl_close($curl);
 }
-
 function PushMessage($to,$text,$channelAccessToken){
     $message_obj = [
         "to" => $to,
@@ -378,6 +362,5 @@ function PushMessage($to,$text,$channelAccessToken){
       curl_setopt($curl, CURLOPT_POSTFIELDS, json_encode($message_obj));
       curl_exec($curl);  
       curl_close($curl);
-
 }
 ?>

@@ -1,6 +1,5 @@
-<!doctype html>
-<html lang="en">
 
+<html>
 <head>
     <meta charset="utf-8" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
@@ -190,6 +189,7 @@ if(isset($MESSAGE_TO_SEND)){
     }
     echo "<span>訊息：".$MESSAGE_TO_SEND." 成功發送!</span>";
 }
+/*
 $ajaxResult = array();
 if( !isset(@$_POST['functionname']) ) { $ajaxResult['error'] = 'No function name!'; }
 if( !isset($ajaxResult['error']) ) {
@@ -210,6 +210,7 @@ if( !isset($ajaxResult['error']) ) {
        break;
      }
 }
+*/
 
 $client = new LINEBotTiny($channelAccessToken, $channelSecret);
 
@@ -285,7 +286,7 @@ foreach ($client->parseEvents() as $event) {
             break;
             
         default:
-            error_log("Unsupporeted event type: " . $event['type']);
+            echo "Unsupporeted event type: " . $event['type']);
             break;
     }
 };
@@ -345,6 +346,7 @@ function PushFood($to,$search){
           ]
         ]
       ];
+      
       $curl = curl_init() ;
       curl_setopt($curl, CURLOPT_URL, "https://api.line.me/v2/bot/message/push") ;
       curl_setopt($curl, CURLOPT_HEADER, true);

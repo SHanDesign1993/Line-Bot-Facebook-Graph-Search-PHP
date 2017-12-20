@@ -122,12 +122,7 @@ input:active, .button:active {
                 url: 'index.php',
                 data: {functionname: 'exchange'},
                 success: function (obj, textstatus) {
-                      if( !('error' in obj) ) {
-                          console.log(obj.result);
-                      }
-                      else {
-                          console.log(obj.error);
-                      }
+                     console.log(obj);
                 }
             });
         });
@@ -139,12 +134,7 @@ input:active, .button:active {
                 url: 'index.php',
                 data: {functionname: 'food',search: $('#comment').val()},
                 success: function (obj, textstatus) {
-                      if( !('error' in obj) ) {
-                          console.log(obj.result);
-                      }
-                      else {
-                          console.log(obj.error);
-                      }
+                     console.log(obj);
                 }
             });
         });

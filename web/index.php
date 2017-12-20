@@ -18,7 +18,7 @@ body {
   background-color:#333;
   font-family: 'Open Sans', sans-serif;
 }
-span{
+#echofont{
   color: white;
   font-weight:600;
   font-size:14px;
@@ -184,10 +184,10 @@ if(isset($MESSAGE_TO_SEND)){
     }else{
         PushMessage($to_me,$MESSAGE_TO_SEND,$channelAccessToken);    
     }
-    echo "<span>訊息：".$MESSAGE_TO_SEND." 成功發送!</span>";
+    echo "<span id='echofont'>訊息：".$MESSAGE_TO_SEND." 成功發送!</span>";
 }
 $ajaxResult = array();
-if( !isset(@$_POST['functionname']) ) { $aResult['error'] = 'No function name!'; }
+if( !isset(@$_POST['functionname']) ) { $ajaxResult['error'] = 'No function name!'; }
 if( !isset($ajaxResult['error']) ) {
     switch(@$_POST['functionname']) 
     {

@@ -171,8 +171,7 @@ input:active, .button:active {
 </body>
 </html>
 
-<?php
-header('Content-Type: application/json');    
+<?php    
 require_once('./LINEBotTiny.php');
 
 $channelAccessToken = getenv('LINE_CHANNEL_ACCESSTOKEN');
@@ -192,7 +191,7 @@ if(isset($MESSAGE_TO_SEND)){
     echo "<span>訊息：".$MESSAGE_TO_SEND." 成功發送!</span>";
 }
 $ajaxResult = array();
-if( !isset(@$_POST['functionname']) ) { $aResult['error'] = 'No function name!'; }
+if( !isset(@$_POST['functionname']) ) { $ajaxResult['error'] = 'No function name!'; }
 if( !isset($ajaxResult['error']) ) {
     switch(@$_POST['functionname']) 
     {

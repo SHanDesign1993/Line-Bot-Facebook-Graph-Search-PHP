@@ -146,16 +146,17 @@ input:active, .button:active {
 <div id="pizza">
 <form method="post" action="index.php">
 <input name="person" type="text" value="you" />
-<textarea name="comment" id="comment" placeholder="Go crazy"></textarea>
+<textarea name="comment" placeholder="Go crazy"></textarea>
 <input type="submit" value="Submit">
 <a class="button">Preview</a>
 <a class="button" id="exchange">Exchange Points</a>
-<a class="button" id="food">Push Food</a>
+<!--<a class="button" id="food">Push Food</a>-->
 </form>
 </div>
 <div id="hamburger"> 
 </div>
-
+</body>
+</html>
 
 <?php
 require_once('./LINEBotTiny.php');
@@ -168,8 +169,7 @@ $MESSAGE_TO_SEND = @$_POST['comment'];
 $PERSON_TO_SEND = @$_POST['person'];
 $FUNC_NAME = @$_POST['functionname'];
 $FUNC_KEY = @$_POST['search'];
-PushFood($to_me,'彰化',$channelAccessToken);  
-    
+ 
 if(isset($MESSAGE_TO_SEND)){
     if($PERSON_TO_SEND=="you"){
         PushMessage($to_ya,$MESSAGE_TO_SEND,$channelAccessToken);
@@ -302,71 +302,49 @@ function PushMessage($to,$text,$channelAccessToken){
 }
     
 function PushFood($to,$search,$channelAccessToken){
-    
+
     $json = file_get_contents('https://spreadsheets.google.com/feeds/list/1tQCaj3LUVwH0tBuPrfBY2dOJuF-qzpYEdOqGdNvJRLc/od6/public/values?alt=json');
     $data = json_decode($json, true);
     $result = array();
-    
-    //print_r($data);
- 
+
     foreach ($data['feed']['entry'] as $item) {
-      $keywords = explode(',', $item['gsx$keyword']['$t']);
-      foreach ($keywords as $keyword) {
-        if (mb_strpos($search, $keyword) !== false) {
-          $candidate = array(
-            'thumbnailImageUrl' => $item['gsx$photourl']['$t'],
-            'title' => $item['gsx$title']['$t'],
-            'text' => $item['gsx$title']['$t'],
-              'actions' => array(
-                array(
-                  'type' => 'uri',
-                  'label' => '查看詳情',
-                  'uri' => $item['gsx$url']['$t'],
-                ),
-              ),
-            );
-            //print_r($candidate);
-            array_push($result, $candidate);
+        $keywords = explode(',', $item['gsx$keyword']['$t']);
+        foreach ($keywords as $keyword) {
+            if (mb_strpos($search, $keyword) !== false) {
+                $candidate = array(
+                    'thumbnailImageUrl' => $item['gsx$photourl']['$t'],
+                    'title' => $item['gsx$title']['$t'],
+                    'text' => $item['gsx$title']['$t'],
+                    'actions' => array(
+                        array(
+                            'type' => 'uri',
+                            'label' => '查看詳情',
+                            'uri' => $item['gsx$url']['$t'],
+                        ),
+                    ),
+                );
+                array_push($result, $candidate);
+            }
         }
-      }
     }
-    
-    
-    $message_obj = [
-        'to' => $to,
-        'messages' => [
-          [
-            'type' => 'template',
-            'altText' => '為您推薦下列美食：',
-            'template' => [
-                'type' => 'carousel',
-                'columns' => $result
-            ]
-          ],
-          [
-              'type' => 'sticker',
-              'packageId' => '1',
-              'stickerId' => '2',
-          ]
+
+    $message_obj = ["to" => $to,"messages" =>
+        [
+            ["type" => "template","altText" => "為您推薦下列美食：","template" => ["type" => "carousel","columns" => $result]],
+            ["type" => "sticker","packageId" => '1',"stickerId" => '2']
         ]
-      ];
+    ];
     
-      print_r($message_obj);
-    
-      echo json_encode($message_obj);
-      
-      $curl = curl_init() ; 
-      curl_setopt($curl, CURLOPT_URL, "https://api.line.me/v2/bot/message/push") ;
-      curl_setopt($curl, CURLOPT_HEADER, true);
-      curl_setopt($curl, CURLOPT_CUSTOMREQUEST, "POST");
-      curl_setopt($curl, CURLOPT_HTTPHEADER, array("Content-Type: application/json;charset=UTF-8 ", "Authorization: Bearer " . $channelAccessToken));
-      curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
-      curl_setopt($curl, CURLOPT_POSTFIELDS, json_encode($message_obj));
-      $r=curl_exec($curl);  
-      echo $r;
-      curl_close($curl);
-}    
+    $curl = curl_init() ;
+    curl_setopt($curl, CURLOPT_URL, "https://api.line.me/v2/bot/message/push") ;
+    curl_setopt($curl, CURLOPT_HEADER, true);
+    curl_setopt($curl, CURLOPT_CUSTOMREQUEST, "POST");
+    curl_setopt($curl, CURLOPT_HTTPHEADER, array("Content-Type: application/json;charset=UTF-8 ", "Authorization: Bearer " . $channelAccessToken));
+    curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
+    curl_setopt($curl, CURLOPT_POSTFIELDS, json_encode($message_obj));
+    curl_exec($curl);
+    curl_close($curl);
+}   
     
 ?>
-</body>
-</html>
+

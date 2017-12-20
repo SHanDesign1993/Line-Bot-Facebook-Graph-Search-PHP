@@ -155,8 +155,7 @@ input:active, .button:active {
 </div>
 <div id="hamburger"> 
 </div>
-</body>
-</html>
+
 
 <?php
 require_once('./LINEBotTiny.php');
@@ -169,7 +168,8 @@ $MESSAGE_TO_SEND = @$_POST['comment'];
 $PERSON_TO_SEND = @$_POST['person'];
 $FUNC_NAME = @$_POST['functionname'];
 $FUNC_KEY = @$_POST['search'];
-   
+PushFood($to_me,'彰化');  
+    
 if(isset($MESSAGE_TO_SEND)){
     if($PERSON_TO_SEND=="you"){
         PushMessage($to_ya,$MESSAGE_TO_SEND,$channelAccessToken);
@@ -368,3 +368,5 @@ function PushFood($to,$search){
 }    
     
 ?>
+</body>
+</html>

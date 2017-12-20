@@ -142,9 +142,12 @@ $channelAccessToken = getenv('LINE_CHANNEL_ACCESSTOKEN');
 $channelSecret = getenv('LINE_CHANNEL_SECRET');
 $to_me="U4a26dead451bc002afd416b24050216c";
 $to_ya="Ua24ab88b9e3bfb642ff83ef4fc1cd893";
+    
 $MESSAGE_TO_SEND = @$_POST['comment'];
 $PERSON_TO_SEND = @$_POST['person'];
-
+$FUNC_NAME = @$_POST['functionname'];
+$FUNC_KEY = @$_POST['search'];
+    
 if(isset($MESSAGE_TO_SEND)){
     if($PERSON_TO_SEND=="you"){
         PushMessage($to_ya,$MESSAGE_TO_SEND,$channelAccessToken);
@@ -155,22 +158,20 @@ if(isset($MESSAGE_TO_SEND)){
 }
     
 $ajaxResult = array();
-if( !isset(@$_POST['functionname']) ) { $ajaxResult['error'] = 'No function name!'; }
-if( !isset($ajaxResult['error']) ) {
-    switch(@$_POST['functionname']) 
+if(!isset($FUNC_NAME)){ $ajaxResult['error'] = 'No function name!'; }
+if(!isset($ajaxResult['error'])){
+    switch($FUNC_NAME) 
     {
        case 'exchange':
            ChangePoints();
        break;
 
        case 'food':
-           if(isset(@$_POST['search'])){
-               PushFood($to_me,@$_POST['search']);
-           }
+           PushFood($to_me,$FUNC_KEY);
        break;
             
        default:   
-           $ajaxResult['error'] = 'Not found '.@$_POST['functionname'].'. run PushMessage function!';
+           $ajaxResult['error'] = $FUNC_NAME.' Not found !';
        break;
      }
 }

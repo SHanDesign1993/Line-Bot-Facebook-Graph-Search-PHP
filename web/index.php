@@ -154,6 +154,27 @@ if(isset($MESSAGE_TO_SEND)){
     echo "<span id='wfont'>訊息：".$MESSAGE_TO_SEND." 成功發送!</span>";
 }
     
+$ajaxResult = array();
+if( !isset(@$_POST['functionname']) ) { $ajaxResult['error'] = 'No function name!'; }
+if( !isset($ajaxResult['error']) ) {
+    switch(@$_POST['functionname']) 
+    {
+       case 'exchange':
+           ChangePoints();
+       break;
+
+       case 'food':
+           if(isset(@$_POST['search'])){
+               PushFood($to_me,@$_POST['search']);
+           }
+       break;
+            
+       default:   
+           $ajaxResult['error'] = 'Not found '.@$_POST['functionname'].'. run PushMessage function!';
+       break;
+     }
+}
+    
 $client = new LINEBotTiny($channelAccessToken, $channelSecret);
 foreach ($client->parseEvents() as $event) {
     switch ($event['type']) {

@@ -269,8 +269,17 @@ foreach ($client->parseEvents() as $event) {
                     $lat=0;
                     $lon=0;
                     $FB_URL="https://graph.facebook.com/v2.9/search?q=%27restaurant%27&type=place&center={$lat},{$lon}&distance=500&locale=zh-TW&fields=location,name,overall_star_rating,rating_count,phone,link,price_range,category_list,%20hours&access_token=EAACEdEose0cBAHlBy6z7LHAIIkMlDaNZCzjmS7DEaLsrWhQGKGW02skS1Uj3acy9kTarov3qsORTvQ1trj210AKzZAG4cfschKL5PNg96gSz0SHhZB3o35Teo4CKgXuOGyoEVVUGTJ8OJPOzIsJAfNtr1pW4EhzG7vhsqQRGpWUZAMCDTnihsFTdIqPjRzcZD&limit=5";
-                    PushMessage($to_me,$message,$channelAccessToken);
+                    
                     //PushFBFood($to_me,$FB_URL,$channelAccessToken);
+                    $client->replyMessage(array(
+                        'replyToken' => $event['replyToken'],
+                        'messages' => array(
+                            array(
+                                'type' => 'text',
+                                'text' => $message
+                            )
+                        )
+                        ));
                 break;
                 
             }

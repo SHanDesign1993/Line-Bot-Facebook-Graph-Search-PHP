@@ -134,7 +134,7 @@ input:active, .button:active {
                 url: 'index.php',
                 data: {functionname: 'food',search: $('#comment').val()},
                 success: function (obj, textstatus) {
-                     //console.log(obj);
+                     console.log(obj);
                 }
             });
         });
@@ -306,7 +306,9 @@ function PushFood($to,$search){
     $json = file_get_contents('https://spreadsheets.google.com/feeds/list/1tQCaj3LUVwH0tBuPrfBY2dOJuF-qzpYEdOqGdNvJRLc/od6/public/values?alt=json');
     $data = json_decode($json, true);
     $result = array();
+    echo '</br>';
     echo $data;
+    echo '</br>';
  
     foreach ($data['feed']['entry'] as $item) {
       $keywords = explode(',', $item['gsx$keyword']['$t']);
@@ -349,7 +351,7 @@ function PushFood($to,$search){
         ]
       ];
     
-       echo json_encode($message_obj);
+      echo json_encode($message_obj);
       
       $curl = curl_init() ;
       curl_setopt($curl, CURLOPT_URL, "https://api.line.me/v2/bot/message/push") ;

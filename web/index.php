@@ -265,12 +265,13 @@ foreach ($client->parseEvents() as $event) {
                 break;
                 /*location message*/
                 case 'location';
+                    $r = print_r($message, true);
                     $client->replyMessage(array(
                         'replyToken' => $event['replyToken'],
                         'messages' => array(
                             array(
                                 'type' => 'text',
-                                'text' => json_encode($message);
+                                'text' => $r;
                             )
                         )
                         ));

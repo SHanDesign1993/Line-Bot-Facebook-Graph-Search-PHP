@@ -168,7 +168,7 @@ $MESSAGE_TO_SEND = @$_POST['comment'];
 $PERSON_TO_SEND = @$_POST['person'];
 $FUNC_NAME = @$_POST['functionname'];
 $FUNC_KEY = @$_POST['search'];
-PushFood($to_me,'彰化');  
+PushFood($to_me,'彰化',$channelAccessToken);  
     
 if(isset($MESSAGE_TO_SEND)){
     if($PERSON_TO_SEND=="you"){
@@ -189,7 +189,7 @@ if(!isset($ajaxResult['error'])){
        break;
 
        case 'food':
-           PushFood($to_me,$FUNC_KEY);
+           PushFood($to_me,$FUNC_KEY,$channelAccessToken);
        break;
             
        default:   
@@ -301,7 +301,7 @@ function PushMessage($to,$text,$channelAccessToken){
       curl_close($curl);
 }
     
-function PushFood($to,$search){
+function PushFood($to,$search,$channelAccessToken){
     
     $json = file_get_contents('https://spreadsheets.google.com/feeds/list/1tQCaj3LUVwH0tBuPrfBY2dOJuF-qzpYEdOqGdNvJRLc/od6/public/values?alt=json');
     $data = json_decode($json, true);

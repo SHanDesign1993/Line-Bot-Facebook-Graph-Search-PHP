@@ -122,7 +122,7 @@ input:active, .button:active {
                 url: 'index.php',
                 data: {functionname: 'exchange'},
                 success: function (obj, textstatus) {
-                     console.log(obj);
+                     alert('兌換成功！');
                 }
             });
         });
@@ -134,7 +134,7 @@ input:active, .button:active {
                 url: 'index.php',
                 data: {functionname: 'food',search: $('#comment').val()},
                 success: function (obj, textstatus) {
-                     console.log(obj);
+                     //console.log(obj);
                 }
             });
         });
@@ -182,7 +182,6 @@ if(isset($MESSAGE_TO_SEND)){
 $ajaxResult = array();
 if(!isset($FUNC_NAME)){ $ajaxResult['error'] = 'No function name!'; }
 if(!isset($ajaxResult['error'])){
-    echo '</br>switching'.$FUNC_NAME.' and '.$FUNC_KEY;
     switch($FUNC_NAME) 
     {
        case 'exchange':
@@ -303,10 +302,11 @@ function PushMessage($to,$text,$channelAccessToken){
 }
     
 function PushFood($to,$search){
-    echo "</br>pushing".$search;
+    
     $json = file_get_contents('https://spreadsheets.google.com/feeds/list/1tQCaj3LUVwH0tBuPrfBY2dOJuF-qzpYEdOqGdNvJRLc/od6/public/values?alt=json');
     $data = json_decode($json, true);
     $result = array();
+    echo $data;
  
     foreach ($data['feed']['entry'] as $item) {
       $keywords = explode(',', $item['gsx$keyword']['$t']);
@@ -329,6 +329,7 @@ function PushFood($to,$search){
       }
     }
     
+    
     $message_obj = [
         'to' => $to,
         'messages' => [
@@ -347,6 +348,8 @@ function PushFood($to,$search){
           ]
         ]
       ];
+    
+       echo json_encode($message_obj);
       
       $curl = curl_init() ;
       curl_setopt($curl, CURLOPT_URL, "https://api.line.me/v2/bot/message/push") ;

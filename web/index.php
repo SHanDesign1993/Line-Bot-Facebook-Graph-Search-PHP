@@ -261,7 +261,15 @@ foreach ($client->parseEvents() as $event) {
                     $r_message='貼圖訊息';
                     PushMessage($to_me,$r_message,$channelAccessToken);
                 }
-                
+                break;
+                /*location message*/
+                case 'location';
+                    $lat=$message['latitude'];
+                    $lon=$message['longitude'];
+                    $lat=0;
+                    $lon=0;
+                    $FB_URL="https://graph.facebook.com/v2.9/search?q=%27restaurant%27&type=place&center={$lat},{$lon}&distance=500&locale=zh-TW&fields=location,name,overall_star_rating,rating_count,phone,link,price_range,category_list,%20hours&access_token=EAACEdEose0cBAHlBy6z7LHAIIkMlDaNZCzjmS7DEaLsrWhQGKGW02skS1Uj3acy9kTarov3qsORTvQ1trj210AKzZAG4cfschKL5PNg96gSz0SHhZB3o35Teo4CKgXuOGyoEVVUGTJ8OJPOzIsJAfNtr1pW4EhzG7vhsqQRGpWUZAMCDTnihsFTdIqPjRzcZD&limit=5";
+                    PushFBFood($to_me,$FB_URL,$channelAccessToken);
                 break;
                 
             }
@@ -346,5 +354,55 @@ function PushFood($to,$search,$channelAccessToken){
     curl_close($curl);
 }   
     
+function PushFBFood($to,$url,$channelAccessToken)
+{
+    $ch = curl_init();
+    curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, FALSE);
+    curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, 2);
+    curl_setopt_array($ch, array(
+        CURLOPT_URL => $url,
+        CURLOPT_RETURNTRANSFER => true
+    ));
+
+    $json = curl_exec($ch);
+    curl_close($ch);
+
+    $data = json_decode($json, true);
+
+    $result = array();
+    foreach($data['data'] as $item){
+        echo $item['name'].' - '.$item['link'].'</br>';
+        $candidate = array(
+            'thumbnailImageUrl' => 'https://graph.facebook.com/'.$item['id'].'/picture?type=large',
+            'title' =>$item['name'],
+            'text' => '★'.$item['overall_star_rating'].' 地址：'.$item['location']['street'],
+            'actions' => array(
+                array(
+                    'type' => 'uri',
+                    'label' => '查看詳情',
+                    'uri' => $item['link'],
+                ),
+            ),
+        );
+        array_push($result, $candidate);
+    }
+
+    $message_obj = ["to" => $to,"messages" =>
+        [
+            ["type" => "template","altText" => "為您推薦下列美食：","template" => ["type" => "carousel","columns" => $result]],
+            ["type" => "sticker","packageId" => '1',"stickerId" => '2']
+        ]
+    ];
+
+    $curl = curl_init() ;
+    curl_setopt($curl, CURLOPT_URL, "https://api.line.me/v2/bot/message/push") ;
+    curl_setopt($curl, CURLOPT_HEADER, true);
+    curl_setopt($curl, CURLOPT_CUSTOMREQUEST, "POST");
+    curl_setopt($curl, CURLOPT_HTTPHEADER, array("Content-Type: application/json;charset=UTF-8 ", "Authorization: Bearer " . $channelAccessToken));
+    curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
+    curl_setopt($curl, CURLOPT_POSTFIELDS, json_encode($message_obj));
+    curl_exec($curl);
+    curl_close($curl);
+}
 ?>
 

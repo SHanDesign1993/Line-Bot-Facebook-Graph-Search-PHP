@@ -14,7 +14,7 @@
   outline:none;
 }
 body {
-  background-image: url(http://subtlepatterns.subtlepatterns.netdna-cdn.com/patterns/debut_dark.png);
+  background-image: url(https://archive-media-0.nyafuu.org/wg/image/1463/91/1463912523373.png);
   background-color:#333;
   font-family: 'Open Sans', sans-serif;
 }
@@ -90,7 +90,7 @@ input:active, .button:active {
   background-color:#444;
   border:1px solid #444;
   box-shadow: inset 0 0 20px rgba(0,0,0,0.4);
-  background-image:url(http://subtlepatterns.subtlepatterns.netdna-cdn.com/patterns/low_contrast_linen.png);
+  background-image:url(http://i.imgur.com/hJcZOWD.jpg);
   color:#FFF;
   text-shadow:0px 1px 5px #000;
   font-size:14px;
@@ -170,6 +170,7 @@ input:active, .button:active {
 </html>
 
 <?php
+header('Content-Type: application/json');
 require_once('./LINEBotTiny.php');
 $channelAccessToken = getenv('LINE_CHANNEL_ACCESSTOKEN');
 $channelSecret = getenv('LINE_CHANNEL_SECRET');
@@ -180,7 +181,7 @@ $MESSAGE_TO_SEND = @$_POST['comment'];
 $PERSON_TO_SEND = @$_POST['person'];
 $FUNC_NAME = @$_POST['functionname'];
 $FUNC_KEY = @$_POST['search'];
-    
+echo '</br>caught'.$FUNC_NAME.' and '.$FUNC_KEY;    
 if(isset($MESSAGE_TO_SEND)){
     if($PERSON_TO_SEND=="you"){
         PushMessage($to_ya,$MESSAGE_TO_SEND,$channelAccessToken);
@@ -193,7 +194,7 @@ if(isset($MESSAGE_TO_SEND)){
 $ajaxResult = array();
 if(!isset($FUNC_NAME)){ $ajaxResult['error'] = 'No function name!'; }
 if(!isset($ajaxResult['error'])){
-    echo 'switching'.$FUNC_NAME;
+    echo '</br>switching'.$FUNC_NAME;
     switch($FUNC_NAME) 
     {
        case 'exchange':
@@ -314,7 +315,7 @@ function PushMessage($to,$text,$channelAccessToken){
 }
     
 function PushFood($to,$search){
-    echo "pushing".$search;
+    echo "</br>pushing".$search;
     $json = file_get_contents('https://spreadsheets.google.com/feeds/list/1tQCaj3LUVwH0tBuPrfBY2dOJuF-qzpYEdOqGdNvJRLc/od6/public/values?alt=json');
     $data = json_decode($json, true);
     $result = array();

@@ -325,6 +325,7 @@ function PushFood($to,$search){
                 ),
               ),
             );
+            print_r($candidate);
             array_push($result, $candidate);
         }
       }
@@ -350,18 +351,19 @@ function PushFood($to,$search){
         ]
       ];
     
-    print_r($message_obj);
+      print_r($message_obj);
     
       print_r(json_encode($message_obj));
       
-      $curl = curl_init() ;
+      $curl = curl_init() ; 
       curl_setopt($curl, CURLOPT_URL, "https://api.line.me/v2/bot/message/push") ;
       curl_setopt($curl, CURLOPT_HEADER, true);
       curl_setopt($curl, CURLOPT_CUSTOMREQUEST, "POST");
       curl_setopt($curl, CURLOPT_HTTPHEADER, array("Content-Type: application/json;charset=UTF-8 ", "Authorization: Bearer " . $channelAccessToken));
       curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
       curl_setopt($curl, CURLOPT_POSTFIELDS, json_encode($message_obj));
-      curl_exec($curl);  
+      $r=curl_exec($curl);  
+    echo $r;
       curl_close($curl);
 }    
     

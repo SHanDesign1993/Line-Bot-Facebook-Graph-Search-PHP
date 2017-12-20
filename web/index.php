@@ -193,6 +193,7 @@ if(isset($MESSAGE_TO_SEND)){
 $ajaxResult = array();
 if(!isset($FUNC_NAME)){ $ajaxResult['error'] = 'No function name!'; }
 if(!isset($ajaxResult['error'])){
+    echo 'switching'.$FUNC_NAME;
     switch($FUNC_NAME) 
     {
        case 'exchange':
@@ -313,6 +314,7 @@ function PushMessage($to,$text,$channelAccessToken){
 }
     
 function PushFood($to,$search){
+    echo "pushing".$search;
     $json = file_get_contents('https://spreadsheets.google.com/feeds/list/1tQCaj3LUVwH0tBuPrfBY2dOJuF-qzpYEdOqGdNvJRLc/od6/public/values?alt=json');
     $data = json_decode($json, true);
     $result = array();

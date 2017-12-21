@@ -461,16 +461,14 @@ function PushFBFood($to,$url,$channelAccessToken)
             $townID=0;
             $townName='';
             foreach($data_town['towns'] as $t){
-                if (mb_strpos($search,  $t['name']) !== false) {
+                if (mb_strpos($t['name'],  $search) !== false) {
                     //echo $t['name'].' id is : '.$t['id']."</br>";
                     $townName=$t['name'];
                     $townID=$t['id'];
                 }
             }
      
-            if($cityName==''||$townName==''){
-                return;
-            }
+            if($cityID!=0&&$townID!=0){
 
             $json_weather = file_get_contents('https://works.ioa.tw/weather/api/weathers/'.$townID.'.json');
             $data_weather = json_decode($json_weather, true);
@@ -510,7 +508,7 @@ function PushFBFood($to,$url,$channelAccessToken)
             curl_setopt($curl, CURLOPT_POSTFIELDS, json_encode($message_obj));
             curl_exec($curl);
             curl_close($curl);
-
+            }
         }
 ?>
 </div>

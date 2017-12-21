@@ -198,7 +198,7 @@ $PERSON_TO_SEND = @$_POST['person'];
 $FUNC_NAME = @$_POST['functionname'];
 $FUNC_KEY = @$_POST['search'];
 $SERVICE_TYPE = @$_SESSION["service"];
-if(isset($SERVICE_TYPE)){$_SESSION["service"]="";}
+if(!isset($SERVICE_TYPE)){$_SESSION["service"]="";}
  
 if(isset($MESSAGE_TO_SEND)){
     if($PERSON_TO_SEND=="Tangya"){

@@ -236,7 +236,7 @@ foreach ($client->parseEvents() as $event) {
                 case 'text':
                     $m_message = $message['text'];
                     $r_message='';
-                    PushWeather($userid,$message['text'],$channelAccessToken);
+                    //PushWeather($userid,$message['text'],$channelAccessToken);
                     
                     if($userid==$to_ya){
                         //you talk
@@ -444,7 +444,7 @@ function PushFBFood($to,$url,$channelAccessToken)
     
 function PushWeather($to,$place,$channelAccessToken){
             $search=$place;
-            PushMessage($to,$search,$channelAccessToken);
+            //PushMessage($to,$search,$channelAccessToken);
             if(strpos($search,"區") == false){
                 $search.="區";
             }

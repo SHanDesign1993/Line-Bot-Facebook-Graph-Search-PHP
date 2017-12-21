@@ -444,16 +444,7 @@ function PushFBFood($to,$url,$channelAccessToken)
     
 function PushWeather($to,$place,$channelAccessToken){
             $search=$place;
-
-            $client->replyMessage(array(
-                        'replyToken' => $event['replyToken'],
-                        'messages' => array(
-                            array(
-                                'type' => 'text',
-                                'text' => "正在找".$search
-                            )
-                        )
-                        ));
+            PushMessage($to,$search,$channelAccessToken);
             if(strpos($search,"區") == false){
                 $search.="區";
             }
@@ -473,18 +464,8 @@ function PushWeather($to,$place,$channelAccessToken){
                     $cityID=$d['id'];
                 }
             }
+            PushMessage($to,$cityID,$channelAccessToken);
     
-            $client->replyMessage(array(
-                        'replyToken' => $event['replyToken'],
-                        'messages' => array(
-                            array(
-                                'type' => 'text',
-                                'text' => "正在找".$cityName
-                            )
-                        )
-                        ));
-
-
             $json_town = file_get_contents('https://works.ioa.tw/weather/api/cates/'.$cityID.'.json');
             $data_town = json_decode($json_town, true);
             $townID=0;
@@ -496,6 +477,7 @@ function PushWeather($to,$place,$channelAccessToken){
                     $townID=$t['id'];
                 }
             }
+             PushMessage($to,$townID,$channelAccessToken);
 
             if($cityID!=0&&$townID!=0){
                 $json_weather = file_get_contents('https://works.ioa.tw/weather/api/weathers/'.$townID.'.json');

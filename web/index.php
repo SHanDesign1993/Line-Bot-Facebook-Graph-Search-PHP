@@ -1,7 +1,4 @@
-<?php
-    session_start();
-if (!isset($_SESSION['service'])){ $_SESSION['service'] = "";}
-?>
+
 <!doctype html>
 <html lang="en">
 
@@ -198,7 +195,6 @@ $MESSAGE_TO_SEND = @$_POST['comment'];
 $PERSON_TO_SEND = @$_POST['person'];
 $FUNC_NAME = @$_POST['functionname'];
 $FUNC_KEY = @$_POST['search'];
-$SERVICE_TYPE = @$_SESSION["service"];
 
 if(isset($MESSAGE_TO_SEND)){
     if($PERSON_TO_SEND=="Tangya"){
@@ -240,29 +236,8 @@ foreach ($client->parseEvents() as $event) {
                 case 'text':
                     $m_message = $message['text'];
                     $r_message='';
-                    if(strpos( $message['text'], '天氣' ) !== false ){
-                        $client->replyMessage(array(
-                        'replyToken' => $event['replyToken'],
-                        'messages' => array(array('type' => 'text','text' => '傳位置資訊給我，我幫你看看現在天氣如何！'))));
-                        
-                        $_SESSION["service"]="weather";
-                        $client->replyMessage(array(
-                            'replyToken' => $event['replyToken'],
-                            'messages' => array(array('type' => 'text','text' => "1幫你查個".$_SESSION["service"]))));
-                        
-                    }else if(strpos( $message['text'], '美食' ) !== false){
-                        $client->replyMessage(array(
-                        'replyToken' => $event['replyToken'],
-                        'messages' => array(array('type' => 'text','text' => '傳位置資訊給我，我幫你查查附近有什麼好吃的！'))));
-                        
-                        $_SESSION["service"]="food";
-                         $client->replyMessage(array(
-                            'replyToken' => $event['replyToken'],
-                            'messages' => array(array('type' => 'text','text' => "1幫你查個".$_SESSION["service"]))));
-                        
-                    }else{
-                        $_SESSION["service"]="";
-                    }
+                    PushWeather($userid,$m_message,$channelAccessToken);
+                    
                     if($userid==$to_ya){
                         //you talk
                         PushMessage($to_me,$m_message,$channelAccessToken);
@@ -318,11 +293,7 @@ foreach ($client->parseEvents() as $event) {
                 break;
                 /*location message*/
                 case 'location';
-                    $client->replyMessage(array(
-                            'replyToken' => $event['replyToken'],
-                            'messages' => array(array('type' => 'text','text' => "幫你查個".$SERVICE_TYPE))));
-                    if($SERVICE_TYPE=='food'){
-                        $r_message='我找找附近美食...';
+                    $r_message='我找找附近美食...';
                         $client->replyMessage(array(
                             'replyToken' => $event['replyToken'],
                             'messages' => array(array('type' => 'text','text' => $r_message))));
@@ -331,12 +302,6 @@ foreach ($client->parseEvents() as $event) {
                         $access_key =  file_get_contents('http://140.117.6.187/web-s/access_key.txt');
                         $FB_URL="https://graph.facebook.com/v2.9/search?q=%27restaurant%27&type=place&center={$lat},{$lon}&distance=500&locale=zh-TW&fields=location,name,overall_star_rating,rating_count,phone,link,price_range,category_list,%20hours&access_token={$access_key}&limit=5";
                         PushFBFood($userid,$FB_URL,$channelAccessToken);
-                        $_SESSION["service"]="";
-                    }else if($SERVICE_TYPE=='weather'){
-                        $place = $message['address'];
-                        PushWeather($userid,$place,$channelAccessToken);
-                        $_SESSION["service"]="";
-                    }  
                 break;
                 
             }
@@ -501,6 +466,10 @@ function PushFBFood($to,$url,$channelAccessToken)
                     $townName=$t['name'];
                     $townID=$t['id'];
                 }
+            }
+     
+            if($cityName==''||$townName==''){
+                return;
             }
 
             $json_weather = file_get_contents('https://works.ioa.tw/weather/api/weathers/'.$townID.'.json');

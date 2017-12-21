@@ -236,7 +236,7 @@ foreach ($client->parseEvents() as $event) {
                 case 'text':
                     $m_message = $message['text'];
                     $r_message='';
-                    PushWeather($userid,$m_message,$channelAccessToken);
+                    PushWeather($userid,$message['text'],$channelAccessToken);
                     
                     if($userid==$to_ya){
                         //you talk
@@ -450,7 +450,7 @@ function PushWeather($to,$place,$channelAccessToken){
                         'messages' => array(
                             array(
                                 'type' => 'text',
-                                'text' => $search
+                                'text' => "正在找".$search
                             )
                         )
                         ));
@@ -470,18 +470,19 @@ function PushWeather($to,$place,$channelAccessToken){
                 if (mb_strpos($search,$d['name']) !== false) {
                     //echo $d['name'].' id is : '.$d['id']."</br>";
                     $cityName=$d['name'];
-                    $client->replyMessage(array(
+                    $cityID=$d['id'];
+                }
+            }
+    
+            $client->replyMessage(array(
                         'replyToken' => $event['replyToken'],
                         'messages' => array(
                             array(
                                 'type' => 'text',
-                                'text' => $cityName
+                                'text' => "正在找".$cityName
                             )
                         )
                         ));
-                    $cityID=$d['id'];
-                }
-            }
 
 
             $json_town = file_get_contents('https://works.ioa.tw/weather/api/cates/'.$cityID.'.json');

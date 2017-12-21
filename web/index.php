@@ -449,7 +449,7 @@ function PushFBFood($to,$url,$channelAccessToken)
             $cityID=0;
             $cityName='';
             foreach($data_city as $d){
-                if (mb_strpos($search,  $d['name']) !== false) {
+                if (mb_strpos($d['name'],  $search) !== false) {
                     //echo $d['name'].' id is : '.$d['id']."</br>";
                     $cityName=$d['name'];
                     $cityID=$d['id'];

@@ -1,5 +1,6 @@
 <?php
     session_start();
+if ( ! isset($_SESSION['service']) $_SESSION['service'] = "";
 ?>
 <!doctype html>
 <html lang="en">

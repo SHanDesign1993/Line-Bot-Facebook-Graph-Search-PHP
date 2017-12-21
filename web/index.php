@@ -445,6 +445,15 @@ function PushFBFood($to,$url,$channelAccessToken)
 function PushWeather($to,$place,$channelAccessToken){
             $search=$place;
 
+            $client->replyMessage(array(
+                        'replyToken' => $event['replyToken'],
+                        'messages' => array(
+                            array(
+                                'type' => 'text',
+                                'text' => $search
+                            )
+                        )
+                        ));
             if(strpos($search,"區") == false){
                 $search.="區";
             }
@@ -461,6 +470,15 @@ function PushWeather($to,$place,$channelAccessToken){
                 if (mb_strpos($search,$d['name']) !== false) {
                     //echo $d['name'].' id is : '.$d['id']."</br>";
                     $cityName=$d['name'];
+                    $client->replyMessage(array(
+                        'replyToken' => $event['replyToken'],
+                        'messages' => array(
+                            array(
+                                'type' => 'text',
+                                'text' => $cityName
+                            )
+                        )
+                        ));
                     $cityID=$d['id'];
                 }
             }

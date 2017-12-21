@@ -311,10 +311,6 @@ foreach ($client->parseEvents() as $event) {
                 break;
                 /*location message*/
                 case 'location';
-                    $client->replyMessage(array(
-                            'replyToken' => $event['replyToken'],
-                            'messages' => array(array('type' => 'text','text' => $userid.$_SESSION["service"]))));
-                    
                     if($_SESSION["service"]=='food'){
                         $r_message='我找找附近美食...';
                         $client->replyMessage(array(

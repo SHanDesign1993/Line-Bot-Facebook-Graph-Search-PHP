@@ -14,7 +14,7 @@
   outline:none;
 }
 body {
-  background-image: url(https://archive-media-0.nyafuu.org/wg/image/1463/91/1463912523373.png);
+  background-image: url(https://www.sankalpcs.com/images/sliders/master/slider-bg.jpg);
   background-color:#333;
   font-family: 'Open Sans', sans-serif;
 }
@@ -265,6 +265,12 @@ foreach ($client->parseEvents() as $event) {
                 break;
                 /*location message*/
                 case 'location';
+                    $r_message='我找找附近美食...';
+                    $client->replyMessage(array(
+                        'replyToken' => $event['replyToken'],
+                        'messages' => array(array('type' => 'text','text' => $r_message))));
+                    
+                    
                     $lat=$message['latitude'];
                     $lon=$message['longitude'];
                     $access_key =  file_get_contents('http://140.117.6.187/web-s/access_key.txt');

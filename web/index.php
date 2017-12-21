@@ -311,7 +311,7 @@ foreach ($client->parseEvents() as $event) {
                 break;
                 /*location message*/
                 case 'location';
-                    if($_SESSION["service"]=='food'){
+                    if($SERVICE_TYPE=='food'){
                         $r_message='我找找附近美食...';
                         $client->replyMessage(array(
                             'replyToken' => $event['replyToken'],
@@ -322,7 +322,7 @@ foreach ($client->parseEvents() as $event) {
                         $FB_URL="https://graph.facebook.com/v2.9/search?q=%27restaurant%27&type=place&center={$lat},{$lon}&distance=500&locale=zh-TW&fields=location,name,overall_star_rating,rating_count,phone,link,price_range,category_list,%20hours&access_token={$access_key}&limit=5";
                         PushFBFood($userid,$FB_URL,$channelAccessToken);
                         $_SESSION["service"]="";
-                    }else if($_SESSION["service"]=='weather'){
+                    }else if($SERVICE_TYPE=='weather'){
                         $place = $message['address'];
                         PushWeather($userid,$place,$channelAccessToken);
                         $_SESSION["service"]="";

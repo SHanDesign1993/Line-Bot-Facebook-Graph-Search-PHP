@@ -198,8 +198,7 @@ $PERSON_TO_SEND = @$_POST['person'];
 $FUNC_NAME = @$_POST['functionname'];
 $FUNC_KEY = @$_POST['search'];
 $SERVICE_TYPE = @$_SESSION["service"];
-if(!isset($SERVICE_TYPE)){$_SESSION["service"]="";}
- 
+
 if(isset($MESSAGE_TO_SEND)){
     if($PERSON_TO_SEND=="Tangya"){
         PushMessage($to_ya,$MESSAGE_TO_SEND,$channelAccessToken);
@@ -246,6 +245,9 @@ foreach ($client->parseEvents() as $event) {
                         'messages' => array(array('type' => 'text','text' => '傳位置資訊給我，我幫你看看現在天氣如何！'))));
                         
                         $_SESSION["service"]="weather";
+                        $client->replyMessage(array(
+                            'replyToken' => $event['replyToken'],
+                            'messages' => array(array('type' => 'text','text' => "1幫你查個".$_SESSION["service"]))));
                         
                     }else if(strpos( $message['text'], '美食' ) !== false){
                         $client->replyMessage(array(
@@ -253,6 +255,10 @@ foreach ($client->parseEvents() as $event) {
                         'messages' => array(array('type' => 'text','text' => '傳位置資訊給我，我幫你查查附近有什麼好吃的！'))));
                         
                         $_SESSION["service"]="food";
+                         $client->replyMessage(array(
+                            'replyToken' => $event['replyToken'],
+                            'messages' => array(array('type' => 'text','text' => "1幫你查個".$_SESSION["service"]))));
+                        
                     }else{
                         $_SESSION["service"]="";
                     }
@@ -311,6 +317,9 @@ foreach ($client->parseEvents() as $event) {
                 break;
                 /*location message*/
                 case 'location';
+                    $client->replyMessage(array(
+                            'replyToken' => $event['replyToken'],
+                            'messages' => array(array('type' => 'text','text' => "幫你查個".$SERVICE_TYPE))));
                     if($SERVICE_TYPE=='food'){
                         $r_message='我找找附近美食...';
                         $client->replyMessage(array(

@@ -1,3 +1,6 @@
+<?php
+    session_start();
+?>
 <!doctype html>
 <html lang="en">
 
@@ -68,6 +71,26 @@ input, .button {
   cursor:pointer;
   position:relative;
 }
+input, .button-sm{
+  margin-top:10px;
+  border:none;
+  margin-right:10px;
+  display: block;
+  float:left;
+  background-color: #9ACD32;
+  line-height: 1;
+  padding: 6px 6px 6px 6px;
+  color: white;
+  border-radius: 4px;
+  box-shadow: 0px 3px 0px #0C3658, 0px 3px 14px rgba(0,0,0,0.6);
+  transition: background-color 0.1s ease;
+  font-family: 'Open Sans', sans-serif;
+  font-weight:600;
+  font-size:14px;
+  text-decoration:none !important;
+  cursor:pointer;
+  position:relative;
+}
 input:hover, .button:hover {
   background-color: #2E92E2;
 }
@@ -116,6 +139,13 @@ input:active, .button:active {
         $('.button').click(function () {
             $('#hamburger').html($('textarea').val());
         });
+        $('#person1').click(function () {
+            $('#personname').val('Henry');
+        });
+        $('#person2').click(function () {
+            $('#personname').val('Tangya');
+        });
+        
         $('#exchange').click(function () {
              $.ajax({
                 type: "POST",
@@ -145,19 +175,17 @@ input:active, .button:active {
 <div id="table">
 <div id="pizza">
 <form method="post" action="index.php">
-<input name="person" type="text" value="you" />
-<textarea name="comment" placeholder="Go crazy"></textarea>
-<input type="submit" value="Submit">
-<a class="button">Preview</a>
-<a class="button" id="exchange">Exchange Points</a>
+<input style="padding:3.5px;" name="person" type="text" value="" id="personname" placeholder="Choose Person To Send..."/> 
+<a class="button-sm" id="person1">Henry</a>
+<a class="button-sm" id="person2">Tangya</a>
+<textarea name="comment" placeholder="type someting..."></textarea>
+<input type="submit" value="送出">
+<!--<a class="button">Preview</a>-->
+<a class="button" id="exchange">兌換點數</a>
 <!--<a class="button" id="food">Push Food</a>-->
 </form>
 </div>
 <div id="hamburger"> 
-</div>
-</body>
-</html>
-
 <?php
 require_once('./LINEBotTiny.php');
 $channelAccessToken = getenv('LINE_CHANNEL_ACCESSTOKEN');
@@ -169,9 +197,11 @@ $MESSAGE_TO_SEND = @$_POST['comment'];
 $PERSON_TO_SEND = @$_POST['person'];
 $FUNC_NAME = @$_POST['functionname'];
 $FUNC_KEY = @$_POST['search'];
+$SERVICE_TYPE = @$_SESSION["service"];
+if(isset($SERVICE_TYPE)){$_SESSION["service"]="";}
  
 if(isset($MESSAGE_TO_SEND)){
-    if($PERSON_TO_SEND=="you"){
+    if($PERSON_TO_SEND=="Tangya"){
         PushMessage($to_ya,$MESSAGE_TO_SEND,$channelAccessToken);
     }else{
         PushMessage($to_me,$MESSAGE_TO_SEND,$channelAccessToken);    
@@ -209,7 +239,23 @@ foreach ($client->parseEvents() as $event) {
                  /* text message */
                 case 'text':
                     $m_message = $message['text'];
-                    $r_message=''; 
+                    $r_message='';
+                    if(strpos( $message['text'], '天氣' ) !== false ){
+                        $client->replyMessage(array(
+                        'replyToken' => $event['replyToken'],
+                        'messages' => array(array('type' => 'text','text' => '傳位置資訊給我，我幫你看看現在天氣如何！'))));
+                        
+                        $_SESSION["service"]="weather";
+                        
+                    }else if(strpos( $message['text'], '美食' ) !== false){
+                        $client->replyMessage(array(
+                        'replyToken' => $event['replyToken'],
+                        'messages' => array(array('type' => 'text','text' => '傳位置資訊給我，我幫你查查附近有什麼好吃的！'))));
+                        
+                        $_SESSION["service"]="food";
+                    }else{
+                        $_SESSION["service"]="";
+                    }
                     if($userid==$to_ya){
                         //you talk
                         PushMessage($to_me,$m_message,$channelAccessToken);
@@ -265,19 +311,22 @@ foreach ($client->parseEvents() as $event) {
                 break;
                 /*location message*/
                 case 'location';
-                    $r_message='我找找附近美食...';
-                    $client->replyMessage(array(
-                        'replyToken' => $event['replyToken'],
-                        'messages' => array(array('type' => 'text','text' => $r_message))));
-                    
-                    
-                    $lat=$message['latitude'];
-                    $lon=$message['longitude'];
-                    $access_key =  file_get_contents('http://140.117.6.187/web-s/access_key.txt');
-                    $FB_URL="https://graph.facebook.com/v2.9/search?q=%27restaurant%27&type=place&center={$lat},{$lon}&distance=500&locale=zh-TW&fields=location,name,overall_star_rating,rating_count,phone,link,price_range,category_list,%20hours&access_token={$access_key}&limit=5";
-                   
-                    PushFBFood($to_me,$FB_URL,$channelAccessToken);
-                    
+                    if($_SESSION["service"]=='food'){
+                        $r_message='我找找附近美食...';
+                        $client->replyMessage(array(
+                            'replyToken' => $event['replyToken'],
+                            'messages' => array(array('type' => 'text','text' => $r_message))));
+                        $lat=$message['latitude'];
+                        $lon=$message['longitude'];
+                        $access_key =  file_get_contents('http://140.117.6.187/web-s/access_key.txt');
+                        $FB_URL="https://graph.facebook.com/v2.9/search?q=%27restaurant%27&type=place&center={$lat},{$lon}&distance=500&locale=zh-TW&fields=location,name,overall_star_rating,rating_count,phone,link,price_range,category_list,%20hours&access_token={$access_key}&limit=5";
+                        PushFBFood($userid,$FB_URL,$channelAccessToken);
+                        $_SESSION["service"]="";
+                    }else if($_SESSION["service"]=='weather'){
+                        $place = $message['address'];
+                        PushWeather($userid,$place,$channelAccessToken);
+                        $_SESSION["service"]="";
+                    }  
                 break;
                 
             }
@@ -295,6 +344,11 @@ function ChangePoints(){
     $ex = file_get_contents("http://140.117.6.187/Analysis/FunctionDisplay/linebot_change_point.php");
     $count = file_get_contents("http://140.117.6.187/Analysis/FunctionDisplay/linebot_get_point.php");
     $r_message='successfully done! (left '.$count.' pts)';
+    $to_me="U4a26dead451bc002afd416b24050216c";
+    $to_ya="Ua24ab88b9e3bfb642ff83ef4fc1cd893";
+    
+    PushMessage($to_me,'兌換成功！',getenv('LINE_CHANNEL_ACCESSTOKEN'));
+    PushMessage($to_ya,'毛毛成功兌換了一餐! :)',getenv('LINE_CHANNEL_ACCESSTOKEN'));
 }
 function PushMessage($to,$text,$channelAccessToken){
     $message_obj = [
@@ -412,5 +466,75 @@ function PushFBFood($to,$url,$channelAccessToken)
     curl_exec($curl);
     curl_close($curl);
 }
+    
+ function PushWeather($to,$place,$channelAccessToken){
+            $search=$place;
+            $json_city = file_get_contents('https://works.ioa.tw/weather/api/all.json');
+            $data_city = json_decode($json_city, true);
+            $cityID=0;
+            $cityName='';
+            foreach($data_city as $d){
+                if (mb_strpos($search,  $d['name']) !== false) {
+                    //echo $d['name'].' id is : '.$d['id']."</br>";
+                    $cityName=$d['name'];
+                    $cityID=$d['id'];
+                }
+            }
+
+            $json_town = file_get_contents('https://works.ioa.tw/weather/api/cates/'.$cityID.'.json');
+            $data_town = json_decode($json_town, true);
+            $townID=0;
+            $townName='';
+            foreach($data_town['towns'] as $t){
+                if (mb_strpos($search,  $t['name']) !== false) {
+                    //echo $t['name'].' id is : '.$t['id']."</br>";
+                    $townName=$t['name'];
+                    $townID=$t['id'];
+                }
+            }
+
+            $json_weather = file_get_contents('https://works.ioa.tw/weather/api/weathers/'.$townID.'.json');
+            $data_weather = json_decode($json_weather, true);
+
+            $img_url="https://works.ioa.tw/weather/img/weathers/zeusdesign/".$data_weather['img'];
+            $title=$cityName."-".$townName;
+            $text=$data_weather['desc']." 溫度：".$data_weather['temperature'];
+            $item = array(
+                'thumbnailImageUrl' => $img_url,
+                'title' => $title,
+                'text' => $text,
+                'actions' => array(
+                    array(
+                        'type' => 'uri',
+                        'label' => '查看詳情',
+                        'uri' => "https://works.ioa.tw/weather/towns/{$title}.html",
+                    ),
+                ),
+
+            );
+            $response=array();
+            array_push($response, $item);
+
+
+            $message_obj = ["to" => $to,"messages" =>
+                [
+                    ["type" => "template","altText" => "您區域目前的天氣為：","template" => ["type" => "carousel","columns" => $response]],
+                ]
+            ];
+
+            $curl = curl_init() ;
+            curl_setopt($curl, CURLOPT_URL, "https://api.line.me/v2/bot/message/push") ;
+            curl_setopt($curl, CURLOPT_HEADER, true);
+            curl_setopt($curl, CURLOPT_CUSTOMREQUEST, "POST");
+            curl_setopt($curl, CURLOPT_HTTPHEADER, array("Content-Type: application/json;charset=UTF-8 ", "Authorization: Bearer " . $channelAccessToken));
+            curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
+            curl_setopt($curl, CURLOPT_POSTFIELDS, json_encode($message_obj));
+            curl_exec($curl);
+            curl_close($curl);
+
+        }
 ?>
+</div>
+</body>
+</html>
 

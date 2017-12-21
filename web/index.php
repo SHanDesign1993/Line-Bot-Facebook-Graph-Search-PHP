@@ -442,73 +442,84 @@ function PushFBFood($to,$url,$channelAccessToken)
     curl_close($curl);
 }
     
- function PushWeather($to,$place,$channelAccessToken){
+function PushWeather($to,$place,$channelAccessToken){
             $search=$place;
+
+            if(strpos($search,"區") == false){
+                $search.="區";
+            }
+
+
             $json_city = file_get_contents('https://works.ioa.tw/weather/api/all.json');
             $data_city = json_decode($json_city, true);
             $cityID=0;
             $cityName='';
+
+
+
             foreach($data_city as $d){
-                if (mb_strpos($d['name'],  $search) !== false) {
+                if (mb_strpos($search,$d['name']) !== false) {
                     //echo $d['name'].' id is : '.$d['id']."</br>";
                     $cityName=$d['name'];
                     $cityID=$d['id'];
                 }
             }
 
+
             $json_town = file_get_contents('https://works.ioa.tw/weather/api/cates/'.$cityID.'.json');
             $data_town = json_decode($json_town, true);
             $townID=0;
             $townName='';
             foreach($data_town['towns'] as $t){
-                if (mb_strpos($t['name'],  $search) !== false) {
+                if (mb_strpos($search,$t['name']) !== false) {
                     //echo $t['name'].' id is : '.$t['id']."</br>";
                     $townName=$t['name'];
                     $townID=$t['id'];
                 }
             }
-     
+
             if($cityID!=0&&$townID!=0){
+                $json_weather = file_get_contents('https://works.ioa.tw/weather/api/weathers/'.$townID.'.json');
+                $data_weather = json_decode($json_weather, true);
 
-            $json_weather = file_get_contents('https://works.ioa.tw/weather/api/weathers/'.$townID.'.json');
-            $data_weather = json_decode($json_weather, true);
-
-            $img_url="https://works.ioa.tw/weather/img/weathers/zeusdesign/".$data_weather['img'];
-            $title=$cityName."-".$townName;
-            $text=$data_weather['desc']." 溫度：".$data_weather['temperature'];
-            $item = array(
-                'thumbnailImageUrl' => $img_url,
-                'title' => $title,
-                'text' => $text,
-                'actions' => array(
-                    array(
-                        'type' => 'uri',
-                        'label' => '查看詳情',
-                        'uri' => "https://works.ioa.tw/weather/towns/{$title}.html",
+                $img_url="https://works.ioa.tw/weather/img/weathers/zeusdesign/".$data_weather['img'];
+                $title=$cityName."-".$townName;
+                $text=$data_weather['desc']." 溫度：".$data_weather['temperature'];
+                $item = array(
+                    'thumbnailImageUrl' => $img_url,
+                    'title' => $title,
+                    'text' => $text,
+                    'actions' => array(
+                        array(
+                            'type' => 'uri',
+                            'label' => '查看詳情',
+                            'uri' => "https://works.ioa.tw/weather/towns/{$title}.html",
+                        ),
                     ),
-                ),
 
-            );
-            $response=array();
-            array_push($response, $item);
+                );
+                $response=array();
+                array_push($response, $item);
 
 
-            $message_obj = ["to" => $to,"messages" =>
-                [
-                    ["type" => "template","altText" => "您區域目前的天氣為：","template" => ["type" => "carousel","columns" => $response]],
-                ]
-            ];
+                $message_obj = ["to" => $to,"messages" =>
+                    [
+                        ["type" => "template","altText" => "您區域目前的天氣為：","template" => ["type" => "carousel","columns" => $response]],
+                    ]
+                ];
 
-            $curl = curl_init() ;
-            curl_setopt($curl, CURLOPT_URL, "https://api.line.me/v2/bot/message/push") ;
-            curl_setopt($curl, CURLOPT_HEADER, true);
-            curl_setopt($curl, CURLOPT_CUSTOMREQUEST, "POST");
-            curl_setopt($curl, CURLOPT_HTTPHEADER, array("Content-Type: application/json;charset=UTF-8 ", "Authorization: Bearer " . $channelAccessToken));
-            curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
-            curl_setopt($curl, CURLOPT_POSTFIELDS, json_encode($message_obj));
-            curl_exec($curl);
-            curl_close($curl);
+                $curl = curl_init() ;
+                curl_setopt($curl, CURLOPT_URL, "https://api.line.me/v2/bot/message/push") ;
+                curl_setopt($curl, CURLOPT_HEADER, true);
+                curl_setopt($curl, CURLOPT_CUSTOMREQUEST, "POST");
+                curl_setopt($curl, CURLOPT_HTTPHEADER, array("Content-Type: application/json;charset=UTF-8 ", "Authorization: Bearer " . $channelAccessToken));
+                curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
+                curl_setopt($curl, CURLOPT_POSTFIELDS, json_encode($message_obj));
+                curl_exec($curl);
+                curl_close($curl);
             }
+
+
         }
 ?>
 </div>

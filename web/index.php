@@ -232,41 +232,40 @@ foreach ($client->parseEvents() as $event) {
                 case 'text':
                     $m_message = $message['text'];
                     $r_message='';
-                    //PushWeather($userid,$message['text'],$channelAccessToken);
-                    
+                     /* weather */
+                    if(strpos( $message['text'], '天氣' ) !== false){
+                        PushWeather($to_me,"高雄旗津",$channelAccessToken);
+                        PushWeather($to_ya,"高雄前鎮",$channelAccessToken);
+                    }
+                    /* identity */
+                    else if(strpos( $message['text'], 'who' ) !== false){
+                       if($userid==$to_me){
+                            PushMessage($to_me,"you are Handsome Henry:)",$channelAccessToken);
+                       }else{
+                            PushMessage($to_ya,"you are Beautiful Tangya:)",$channelAccessToken);
+                       }
+                    }
+                     /* Tangya Talk */
                     if($userid==$to_ya){
                         //you talk
                         PushMessage($to_me,$m_message,$channelAccessToken);
-                        /* identity */
-                        if(strpos( $message['text'], 'who' ) !== false){
-                            //$r_message = print_r($event['source'],true);
-                            $r_message="你是毛毛";
-                        }else if(strpos( $message['text'], '天氣' ) !== false){
-                            PushWeather($to_me,"高雄旗津",$channelAccessToken);
-                            PushWeather($to_ya,"高雄前鎮",$channelAccessToken);
-                        }
+                        
                         /* check point */
-                        else if( strpos( $message['text'], '點數' ) !== false || strpos( $message['text'], '查' ) !== false)
+                        if( strpos( $message['text'], '點數' ) !== false || strpos( $message['text'], '查' ) !== false)
                         {
                             $count = file_get_contents("http://140.117.6.187/Analysis/FunctionDisplay/linebot_get_point.php");
-                            $r_message='毛毛現在總共有 '.$count.' 點!!!'.unichr(0x1000B6);
-                            if($count>=3){
-                              $r_message.=' 好誇喔喔喔'.unichr(0x100091);
-                            }else if($count==0){
-                              $r_message.=' 恩...多笑一點吧！'.unichr(0x10008E);
-                            }else{
-                              $r_message.=' 繼續加油囉'.unichr(0x10008A);
-                            } 
+                            $r_message='你現在總共有 '.$count.' 點!'.unichr(0x1000B6);
                         }
                         /* get point */
-                        else if( strpos( $message['text'], '我愛你' ) !== false || strpos( $message['text'], 'ok' ) !== false)
+                        else if( strpos( $message['text'], '愛你' ) !== false || strpos( $message['text'], 'ok' ) !== false)
                         {
+                            PushMessage($to_ya,"Love u too >3<",$channelAccessToken);
                             $add = file_get_contents("http://140.117.6.187/Analysis/FunctionDisplay/linebot_add_point.php");
                             $count = file_get_contents("http://140.117.6.187/Analysis/FunctionDisplay/linebot_get_point.php");
                             if($add=='ok'){
-                              $r_message='毛寶寶爭氣的獲得了1點~總共有 '.$count.'點了哦嘿嘿'.unichr(0x100022);
+                              $r_message='你爭氣的獲得了1點! (共 '.$count.'點)'.unichr(0x100022);
                             }else{
-                              $r_message='毛毛今天拿過點數了喔！這樣不乖內'.unichr(0x10000E);
+                              $r_message='你今天拿過點數了! '.unichr(0x10000E);
                             }
                         }
                     }
@@ -286,7 +285,7 @@ foreach ($client->parseEvents() as $event) {
                 /* sticker message */
                 case 'sticker':
                 if($userid==$to_ya){
-                    $r_message='貼圖訊息';
+                    $r_message='Sticker';
                     PushMessage($to_me,$r_message,$channelAccessToken);
                 }
                 break;
@@ -323,8 +322,8 @@ function ChangePoints(){
     $to_me="U4a26dead451bc002afd416b24050216c";
     $to_ya="Ua24ab88b9e3bfb642ff83ef4fc1cd893";
     
-    PushMessage($to_me,'兌換成功！',getenv('LINE_CHANNEL_ACCESSTOKEN'));
-    PushMessage($to_ya,'毛毛成功兌換了一餐! :)',getenv('LINE_CHANNEL_ACCESSTOKEN'));
+    PushMessage($to_me,'兌換成功！快輸入「美食」找找要吃什麼! :)',getenv('LINE_CHANNEL_ACCESSTOKEN'));
+    PushMessage($to_ya,'你成功兌換了一餐! 快輸入「美食」找找要吃什麼! :)',getenv('LINE_CHANNEL_ACCESSTOKEN'));
 }
     
 function PushMessage($to,$text,$channelAccessToken){

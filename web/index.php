@@ -452,7 +452,7 @@ function PushWeather($to,$place,$channelAccessToken){
                 $item2 = array(
                     'thumbnailImageUrl' => $img_url,
                     'title' => $title." ".$data_weather['desc'],
-                    'text' => "白天溫度：".intval($data_weather['temperature'])+5,
+                    'text' => "白天溫度：".(int)$data_weather['temperature']+5,
                     'actions' => array(
                         array(
                             'type' => 'uri',

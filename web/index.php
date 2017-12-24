@@ -233,7 +233,7 @@ foreach ($client->parseEvents() as $event) {
                     $m_message = $message['text'];
                     $r_message='';
                      /* weather */
-                    if(strpos( $message['text'], '天氣' ) !== false){
+                    if(strpos( $message['text'], 'weather' ) !== false){
                         PushWeather($to_me,'高雄旗津',$channelAccessToken);
                         PushWeather($to_ya,'高雄前鎮',$channelAccessToken);
                     }
@@ -426,7 +426,7 @@ function unicode2utf8($str){
 
 
 
-            $url = "https://drive.google.com/uc?id=".$file;
+            $url = "https://drive.google.com/uc?id=".$id;
             //echo $url;
              $img_obj = [
                  "to" => $to,

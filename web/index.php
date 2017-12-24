@@ -413,7 +413,6 @@ function unicode2utf8($str){
 
 function PushWeather($to,$place,$channelAccessToken){
     $search=$place;
-    $search= unicode2utf8($search);
     
     if(strpos($search,"區") == false){
        $search.="區";
@@ -441,6 +440,8 @@ function PushWeather($to,$place,$channelAccessToken){
            $townID=$t['id'];
        }
     }
+    
+    echo  $search."-".$cityID."-".$townID;
 
     if($cityID!=0&&$townID!=0){
          $json_weather = file_get_contents('https://works.ioa.tw/weather/api/weathers/'.$townID.'.json');
@@ -451,7 +452,7 @@ function PushWeather($to,$place,$channelAccessToken){
          $temp_min = (int)$data_weather['temperature'];
          $temp_max =  $temp_min+5;
          $text = "今日氣溫: ".$temp_min." ~ ".$temp_max; 
-        
+         echo  $title."-".$text;
          $item = array(
               'thumbnailImageUrl' => $img_url,
               'title' => $title,

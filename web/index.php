@@ -190,8 +190,7 @@ $channelAccessToken = getenv('LINE_CHANNEL_ACCESSTOKEN');
 $channelSecret = getenv('LINE_CHANNEL_SECRET');
 $to_me="U4a26dead451bc002afd416b24050216c";
 $to_ya="Ua24ab88b9e3bfb642ff83ef4fc1cd893";
-PushWeather($to_me,"高雄旗津",$channelAccessToken);  
-  
+
 $MESSAGE_TO_SEND = @$_POST['comment'];
 $PERSON_TO_SEND = @$_POST['person'];
 $FUNC_NAME = @$_POST['functionname'];
@@ -412,60 +411,61 @@ function unicode2utf8($str){
 }
 
 function PushWeather($to,$place,$channelAccessToken){
-    $search=$place;
-    
-    if(strpos($search,"區") == false){
-       $search.="區";
-    }
-    
-    $json_city = file_get_contents('https://works.ioa.tw/weather/api/all.json');
-    $data_city = json_decode($json_city, true);
-    $cityID=0;
-    $cityName='';
-    
-    foreach($data_city as $d){
-       if (mb_strpos($search,$d['name']) !== false) {
-          $cityName=$d['name'];
-          $cityID=$d['id'];
-       }
-    }
+            $search=$place;
 
-    $json_town = file_get_contents('https://works.ioa.tw/weather/api/cates/'.$cityID.'.json');
-    $data_town = json_decode($json_town, true);
-    $townID=0;
-    $townName='';
-    foreach($data_town['towns'] as $t){
-       if (mb_strpos($search,$t['name']) !== false) {
-           $townName=$t['name'];
-           $townID=$t['id'];
-       }
-    }
-    
-    echo  $search."-".$cityID."-".$townID;
+            if(strpos($search,"區") == false){
+                $search.="區";
+            }
 
-    if($cityID!=0&&$townID!=0){
-         $json_weather = file_get_contents('https://works.ioa.tw/weather/api/weathers/'.$townID.'.json');
-         $data_weather = json_decode($json_weather, true);
+            $json_city = file_get_contents('https://works.ioa.tw/weather/api/all.json');
+            $data_city = json_decode($json_city, true);
+            $cityID=0;
+            $cityName='';
 
-         $img_url="https://works.ioa.tw/weather/img/weathers/zeusdesign/".$data_weather['img'];
-         $title=$cityName."-".$townName." ".$data_weather['desc'];
-         $temp_min = (int)$data_weather['temperature'];
-         $temp_max =  $temp_min+5;
-         $text = "今日氣溫: ".$temp_min." ~ ".$temp_max; 
-         echo  $title."-".$text;
-         $item = array(
-              'thumbnailImageUrl' => $img_url,
-              'title' => $title,
-              'text' => $text,
-              'actions' => array(
+            foreach($data_city as $d){
+                if (mb_strpos($search,$d['name']) !== false) {
+                    $cityName=$d['name'];
+                    $cityID=$d['id'];
+                }
+            }
+            $json_town = file_get_contents('https://works.ioa.tw/weather/api/cates/'.$cityID.'.json');
+            $data_town = json_decode($json_town, true);
+            $townID=0;
+            $townName='';
+            foreach($data_town['towns'] as $t){
+                if (mb_strpos($search,$t['name']) !== false) {
+                    $townName=$t['name'];
+                    $townID=$t['id'];
+                }
+            }
+
+            //echo  $search."-".$cityID."-".$townID;
+
+            if($cityID!=0&&$townID!=0){
+                $json_weather = file_get_contents('https://works.ioa.tw/weather/api/weathers/'.$townID.'.json');
+                $data_weather = json_decode($json_weather, true);
+
+                $img_url="https://works.ioa.tw/weather/img/weathers/zeusdesign/".$data_weather['img'];
+                $title=$cityName."-".$townName;
+                $temp_min = (int)$data_weather['temperature'];
+                $temp_max =  $temp_min+5;
+                $text = "今日氣溫: ".$temp_min." ~ ".$temp_max;
+                //echo  $title."-".$text;
+
+                $item = array(
+                    'thumbnailImageUrl' => $img_url,
+                    'title' => $title." ".$data_weather['desc'],
+                    'text' => $text,
+                    'actions' => array(
                         array(
                             'type' => 'uri',
                             'label' => '查看詳情',
                             'uri' => "https://works.ioa.tw/weather/towns/{$title}.html",
                         ),
-                ),);
-          $response=array();
-          array_push($response, $item);
+                    ),
+                );
+                $response=array();
+                array_push($response, $item);
 
                 $message_obj = ["to" => $to,"messages" =>
                     [
@@ -482,9 +482,9 @@ function PushWeather($to,$place,$channelAccessToken){
                 curl_setopt($curl, CURLOPT_POSTFIELDS, json_encode($message_obj));
                 curl_exec($curl);
                 curl_close($curl);
-      }
+            }
 
-}
+        }
 ?>
 </div>
 </body>

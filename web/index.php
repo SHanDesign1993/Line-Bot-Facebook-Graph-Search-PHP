@@ -213,10 +213,6 @@ if(!isset($ajaxResult['error'])){
        case 'exchange':
            ChangePoints();
        break;
-
-       case 'food':
-           PushFood($to_me,$FUNC_KEY,$channelAccessToken);
-       break;
             
        default:   
            $ajaxResult['error'] = $FUNC_NAME.' Not found !';
@@ -245,6 +241,9 @@ foreach ($client->parseEvents() as $event) {
                         if(strpos( $message['text'], 'who' ) !== false){
                             //$r_message = print_r($event['source'],true);
                             $r_message="你是毛毛";
+                        }else if(strpos( $message['text'], '天氣' ) !== false){
+                            PushWeather($to_me,"高雄旗津",$channelAccessToken);
+                            PushWeather($to_ya,"高雄前鎮",$channelAccessToken);
                         }
                         /* check point */
                         else if( strpos( $message['text'], '點數' ) !== false || strpos( $message['text'], '查' ) !== false)
@@ -312,9 +311,11 @@ foreach ($client->parseEvents() as $event) {
             break;
     }
 };
+    
 function unichr($i) {
     return iconv('UCS-4LE', 'UTF-8', pack('V', $i));
 }
+    
 function ChangePoints(){
     $ex = file_get_contents("http://140.117.6.187/Analysis/FunctionDisplay/linebot_change_point.php");
     $count = file_get_contents("http://140.117.6.187/Analysis/FunctionDisplay/linebot_get_point.php");
@@ -325,6 +326,7 @@ function ChangePoints(){
     PushMessage($to_me,'兌換成功！',getenv('LINE_CHANNEL_ACCESSTOKEN'));
     PushMessage($to_ya,'毛毛成功兌換了一餐! :)',getenv('LINE_CHANNEL_ACCESSTOKEN'));
 }
+    
 function PushMessage($to,$text,$channelAccessToken){
     $message_obj = [
         "to" => $to,
@@ -345,51 +347,6 @@ function PushMessage($to,$text,$channelAccessToken){
       curl_exec($curl);  
       curl_close($curl);
 }
-    
-function PushFood($to,$search,$channelAccessToken){
-
-    $json = file_get_contents('https://spreadsheets.google.com/feeds/list/1tQCaj3LUVwH0tBuPrfBY2dOJuF-qzpYEdOqGdNvJRLc/od6/public/values?alt=json');
-    $data = json_decode($json, true);
-    $result = array();
-
-    foreach ($data['feed']['entry'] as $item) {
-        $keywords = explode(',', $item['gsx$keyword']['$t']);
-        foreach ($keywords as $keyword) {
-            if (mb_strpos($search, $keyword) !== false) {
-                $candidate = array(
-                    'thumbnailImageUrl' => $item['gsx$photourl']['$t'],
-                    'title' => $item['gsx$title']['$t'],
-                    'text' => $item['gsx$title']['$t'],
-                    'actions' => array(
-                        array(
-                            'type' => 'uri',
-                            'label' => '查看詳情',
-                            'uri' => $item['gsx$url']['$t'],
-                        ),
-                    ),
-                );
-                array_push($result, $candidate);
-            }
-        }
-    }
-
-    $message_obj = ["to" => $to,"messages" =>
-        [
-            ["type" => "template","altText" => "為您推薦下列美食：","template" => ["type" => "carousel","columns" => $result]],
-            ["type" => "sticker","packageId" => '1',"stickerId" => '2']
-        ]
-    ];
-    
-    $curl = curl_init() ;
-    curl_setopt($curl, CURLOPT_URL, "https://api.line.me/v2/bot/message/push") ;
-    curl_setopt($curl, CURLOPT_HEADER, true);
-    curl_setopt($curl, CURLOPT_CUSTOMREQUEST, "POST");
-    curl_setopt($curl, CURLOPT_HTTPHEADER, array("Content-Type: application/json;charset=UTF-8 ", "Authorization: Bearer " . $channelAccessToken));
-    curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
-    curl_setopt($curl, CURLOPT_POSTFIELDS, json_encode($message_obj));
-    curl_exec($curl);
-    curl_close($curl);
-}   
     
 function PushFBFood($to,$url,$channelAccessToken)
 {
@@ -449,13 +406,10 @@ function PushWeather($to,$place,$channelAccessToken){
                 $search.="區";
             }
 
-
             $json_city = file_get_contents('https://works.ioa.tw/weather/api/all.json');
             $data_city = json_decode($json_city, true);
             $cityID=0;
             $cityName='';
-
-
 
             foreach($data_city as $d){
                 if (mb_strpos($search,$d['name']) !== false) {
@@ -464,7 +418,6 @@ function PushWeather($to,$place,$channelAccessToken){
                     $cityID=$d['id'];
                 }
             }
-            PushMessage($to,$cityID,$channelAccessToken);
     
             $json_town = file_get_contents('https://works.ioa.tw/weather/api/cates/'.$cityID.'.json');
             $data_town = json_decode($json_town, true);
@@ -477,7 +430,6 @@ function PushWeather($to,$place,$channelAccessToken){
                     $townID=$t['id'];
                 }
             }
-             PushMessage($to,$townID,$channelAccessToken);
 
             if($cityID!=0&&$townID!=0){
                 $json_weather = file_get_contents('https://works.ioa.tw/weather/api/weathers/'.$townID.'.json');
@@ -485,11 +437,10 @@ function PushWeather($to,$place,$channelAccessToken){
 
                 $img_url="https://works.ioa.tw/weather/img/weathers/zeusdesign/".$data_weather['img'];
                 $title=$cityName."-".$townName;
-                $text=$data_weather['desc']." 溫度：".$data_weather['temperature'];
-                $item = array(
+                $item1 = array(
                     'thumbnailImageUrl' => $img_url,
-                    'title' => $title,
-                    'text' => $text,
+                    'title' => $title." ".$data_weather['desc'],
+                    'text' =>"早晚溫度：".$data_weather['temperature'],
                     'actions' => array(
                         array(
                             'type' => 'uri',
@@ -497,15 +448,28 @@ function PushWeather($to,$place,$channelAccessToken){
                             'uri' => "https://works.ioa.tw/weather/towns/{$title}.html",
                         ),
                     ),
-
                 );
+                
+                $item2 = array(
+                    'thumbnailImageUrl' => $img_url,
+                    'title' => $title." ".$data_weather['desc'],
+                    'text' => "白天溫度：".intval($data_weather['temperature'])+5,
+                    'actions' => array(
+                        array(
+                            'type' => 'uri',
+                            'label' => '查看詳情',
+                            'uri' => "https://works.ioa.tw/weather/towns/{$title}.html",
+                        ),
+                    ),
+                );
+                
                 $response=array();
-                array_push($response, $item);
-
+                array_push($response, $item1);
+                array_push($response, $item2);
 
                 $message_obj = ["to" => $to,"messages" =>
                     [
-                        ["type" => "template","altText" => "您區域目前的天氣為：","template" => ["type" => "carousel","columns" => $response]],
+                        ["type" => "template","altText" => "您區域的天氣為：","template" => ["type" => "carousel","columns" => $response]],
                     ]
                 ];
 
@@ -519,8 +483,6 @@ function PushWeather($to,$place,$channelAccessToken){
                 curl_exec($curl);
                 curl_close($curl);
             }
-
-
         }
 ?>
 </div>

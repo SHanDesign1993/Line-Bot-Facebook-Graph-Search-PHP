@@ -436,23 +436,13 @@ function PushWeather($to,$place,$channelAccessToken){
 
                 $img_url="https://works.ioa.tw/weather/img/weathers/zeusdesign/".$data_weather['img'];
                 $title=$cityName."-".$townName;
+                $temp_min = (int)$data_weather['temperature'];
+                $temp_max =  $temp_min+5;
+                $text = "今日氣溫: ".$temp_min." ~ ".$temp_max; 
                 $item1 = array(
                     'thumbnailImageUrl' => $img_url,
                     'title' => $title." ".$data_weather['desc'],
-                    'text' =>"早晚溫度：".$data_weather['temperature'],
-                    'actions' => array(
-                        array(
-                            'type' => 'uri',
-                            'label' => '查看詳情',
-                            'uri' => "https://works.ioa.tw/weather/towns/{$title}.html",
-                        ),
-                    ),
-                );
-                
-                $item2 = array(
-                    'thumbnailImageUrl' => $img_url,
-                    'title' => $title." ".$data_weather['desc'],
-                    'text' => "白天溫度：".(int)$data_weather['temperature']+5,
+                    'text' => $text,
                     'actions' => array(
                         array(
                             'type' => 'uri',
@@ -463,8 +453,7 @@ function PushWeather($to,$place,$channelAccessToken){
                 );
                 
                 $response=array();
-                array_push($response, $item1);
-                array_push($response, $item2);
+                array_push($response, $item);
 
                 $message_obj = ["to" => $to,"messages" =>
                     [

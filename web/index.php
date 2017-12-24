@@ -234,8 +234,8 @@ foreach ($client->parseEvents() as $event) {
                     $r_message='';
                      /* weather */
                     if(strpos( $message['text'], '天氣' ) !== false){
-                        PushWeather($to_me,"高雄旗津",$channelAccessToken);
-                        PushWeather($to_ya,"高雄前鎮",$channelAccessToken);
+                        PushWeather($to_me,'高雄旗津',$channelAccessToken);
+                        PushWeather($to_ya,'高雄前鎮',$channelAccessToken);
                     }
                     /* identity */
                     else if(strpos( $message['text'], 'who' ) !== false){
@@ -382,8 +382,7 @@ function PushFBFood($to,$url,$channelAccessToken)
 
     $message_obj = ["to" => $to,"messages" =>
         [
-            ["type" => "template","altText" => "為您推薦下列美食：","template" => ["type" => "carousel","columns" => $result]],
-            ["type" => "sticker","packageId" => '1',"stickerId" => '2']
+            ["type" => "template","altText" => "為您推薦下列美食：","template" => ["type" => "carousel","columns" => $result]]
         ]
     ];
 
@@ -396,6 +395,8 @@ function PushFBFood($to,$url,$channelAccessToken)
     curl_setopt($curl, CURLOPT_POSTFIELDS, json_encode($message_obj));
     curl_exec($curl);
     curl_close($curl);
+    
+    PushImage($to,5,$channelAccessToken);
 }
     
 function unicode2utf8($str){
@@ -409,8 +410,45 @@ function unicode2utf8($str){
     }
     return $str;
 }
+    
+ function PushImage($to,$file,$channelAccessToken){
+            $json = file_get_contents('https://spreadsheets.google.com/feeds/list/1_cHu_M5yCQ_zhMmnjXvAZwsYUxpb9ha5dMrAEnkRLWk/od6/public/values?alt=json');
+            $data = json_decode($json, true);
+            $count=0;
+            $id = "";
+            foreach ($data['feed']['entry'] as $item) {
+                $count++;
+                if($count==$file){
+                    print_r($item['gsx$id']['$t']);
+                    $id=$item['gsx$id']['$t'];
+                }
+            }
 
-function PushWeather($to,$place,$channelAccessToken){
+
+
+            $url = "https://drive.google.com/uc?id=".$file;
+            //echo $url;
+             $img_obj = [
+                 "to" => $to,
+                 "messages" => [
+                     [
+                         "type" => "image",
+                         "originalContentUrl" => $url,
+                         "previewImageUrl"=> $url,
+                     ]
+                 ]
+             ];
+            $curl = curl_init() ;
+            curl_setopt($curl, CURLOPT_URL, "https://api.line.me/v2/bot/message/push") ;
+            curl_setopt($curl, CURLOPT_HEADER, true);
+            curl_setopt($curl, CURLOPT_CUSTOMREQUEST, "POST");
+            curl_setopt($curl, CURLOPT_HTTPHEADER, array("Content-Type: application/json;charset=UTF-8 ", "Authorization: Bearer " . $channelAccessToken));
+            curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
+            curl_setopt($curl, CURLOPT_POSTFIELDS, json_encode($img_obj));
+            curl_exec($curl);
+            curl_close($curl);
+        }
+ function PushWeather($to,$place,$channelAccessToken){
             $search=$place;
 
             if(strpos($search,"區") == false){

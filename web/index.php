@@ -230,6 +230,16 @@ div.scrollmenu a:hover {
   <a class="sticker" id="sticks10"><img src="https://drive.google.com/uc?id=1TnTD5g6hXz2p8I6u6q5id51kvhx4O6Te" width=80 /></a>
   <a class="sticker" id="sticks11"><img src="https://drive.google.com/uc?id=1US4ea8ARNsMOCZty9xZpvxGFYpQbAZgV" width=80 /></a>
   <a class="sticker" id="sticks12"><img src="https://drive.google.com/uc?id=1yAQeH0VPbXoLr0OvdMy1GyAx3ttUWkRh" width=80 /></a>
+  <a class="sticker" id="sticks13"><img src="https://drive.google.com/uc?id=1kbjEq0BNPbKn-Lv_eNEkGvj83G0F_-fy" width=80 /></a>
+  <a class="sticker" id="sticks14"><img src="https://drive.google.com/uc?id=1x89t6mrad8JVW1eyPSQMlACdvGS2A4-r" width=80 /></a>
+  <a class="sticker" id="sticks15"><img src="https://drive.google.com/uc?id=1qW5J0sbtAJ97OGoOvMxAs4x6FQG_MckM" width=80 /></a>
+  <a class="sticker" id="sticks16"><img src="https://drive.google.com/uc?id=1bp_j3c1Qzo87fAHZWJCoFspuxuPnALg9" width=80 /></a>
+  <a class="sticker" id="sticks17"><img src="https://drive.google.com/uc?id=1NUpLoLFO9h_w5BCtlSCPghhSJaq8cnwC" width=80 /></a>
+  <a class="sticker" id="sticks18"><img src="https://drive.google.com/uc?id=1H6F8rh7nHHHYJEKMiDhmZxYjo6GqTTm7" width=80 /></a>
+  <a class="sticker" id="sticks19"><img src="https://drive.google.com/uc?id=1rDUVLHaavfcvGYIshyPQ7DHixO6b45bR" width=80 /></a>
+  <a class="sticker" id="sticks20"><img src="https://drive.google.com/uc?id=1GV1_Xu2l78CAQg-84VZCH483oz9WQuE3" width=80 /></a>
+  <a class="sticker" id="sticks21"><img src="https://drive.google.com/uc?id=1nv3uZnnODTLekw63T3p2XrssZrQcViXt" width=80 /></a>
+  <a class="sticker" id="sticks22"><img src="https://drive.google.com/uc?id=1aDlZP6UDFB-IAjUfbeAJH92mog_A5pqz" width=80 /></a>
 </div>
 <div id="hamburger"> 
     

@@ -173,7 +173,7 @@ div.scrollmenu a:hover {
             });
         });
 
-       $("div[id^='sticks']").each(function(index) {
+       $("a[id^='sticks']").each(function(index) {
             $(this).on("click", function(){
                 // get
                 var str = $(this).attr('id'); 

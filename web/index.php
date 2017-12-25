@@ -116,6 +116,7 @@ input:active, .button:active {
   text-shadow:0px 1px 5px #000;
   font-size:14px;
 }
+
 #table {
   width:600px;
   margin:40px auto 20px auto;
@@ -130,6 +131,23 @@ input:active, .button:active {
 #table a {
   color:#FFF;
   text-decoration:underline;
+}
+    div.scrollmenu {
+    background-color: #333;
+    overflow: auto;
+    white-space: nowrap;
+}
+
+div.scrollmenu a {
+    display: inline-block;
+    color: white;
+    text-align: center;
+    padding: 14px;
+    text-decoration: none;
+}
+
+div.scrollmenu a:hover {
+    background-color: #777;
 }
 </style>
 <script language=JavaScript>
@@ -152,6 +170,22 @@ input:active, .button:active {
                 success: function (obj, textstatus) {
                      alert('兌換成功！');
                 }
+            });
+        });
+
+       $("div[id^='sticks']").each(function(index) {
+            $(this).on("click", function(){
+                // get
+                var str = $(this).attr('id'); 
+                var num = parseInt(str.substring(6));
+                $.ajax({
+                type: "POST",
+                url: 'index.php',
+                data: {functionname: 'sticker',index: num,person: $('#personname').val()},
+                success: function (obj, textstatus) {
+                     alert('發送成功！');
+                }
+            });
             });
         });
         
@@ -183,7 +217,22 @@ input:active, .button:active {
 <!--<a class="button" id="food">Push Food</a>-->
 </form>
 </div>
+<div class="scrollmenu">
+  <a class="sticker" id="sticks1"><img src="https://drive.google.com/uc?id=1O_hdYgJCypXCryPpAScnBPhsxDXlJQ7J" width=80 /></a>
+  <a class="sticker" id="sticks2"><img src="https://drive.google.com/uc?id=16ZQ3MzjiITZaE8kgvL8apygiq2iyWuay" width=80 /></a>
+  <a class="sticker" id="sticks3"><img src="https://drive.google.com/uc?id=1yrDS21qMehVMkjPCJ3JOss8xMju_VEIt" width=80 /></a>
+  <a class="sticker" id="sticks4"><img src="https://drive.google.com/uc?id=17smmd37Sm7VkBijeJgqlJfDXP_GCcGmG" width=80 /></a>
+  <a class="sticker" id="sticks5"><img src="https://drive.google.com/uc?id=1iAmxXvmNcLB5-THaymObxH3souVyIn8V" width=80 /></a>
+  <a class="sticker" id="sticks6"><img src="https://drive.google.com/uc?id=1zFfVytvds93Vg6NHovWiomeftuynGkyr" width=80 /></a>
+  <a class="sticker" id="sticks7"><img src="https://drive.google.com/uc?id=1E2Z2dIciaV3HCux81y8_P7B_yzsyfLaj" width=80 /></a>
+  <a class="sticker" id="sticks8"><img src="https://drive.google.com/uc?id=1koUUd0KK5O9VYnS7tgjMpq9SR-Zyr0lw" width=80 /></a>
+  <a class="sticker" id="sticks9"><img src="https://drive.google.com/uc?id=1pkT9s1R4xYkrZ8Zgnf9CVrHEOqjoTuuz" width=80 /></a>
+  <a class="sticker" id="sticks10"><img src="https://drive.google.com/uc?id=1TnTD5g6hXz2p8I6u6q5id51kvhx4O6Te" width=80 /></a>
+  <a class="sticker" id="sticks11"><img src="https://drive.google.com/uc?id=1US4ea8ARNsMOCZty9xZpvxGFYpQbAZgV" width=80 /></a>
+  <a class="sticker" id="sticks12"><img src="https://drive.google.com/uc?id=1yAQeH0VPbXoLr0OvdMy1GyAx3ttUWkRh" width=80 /></a>
+</div>
 <div id="hamburger"> 
+    
 <?php
 require_once('./LINEBotTiny.php');
 $channelAccessToken = getenv('LINE_CHANNEL_ACCESSTOKEN');
@@ -214,6 +263,15 @@ if(!isset($ajaxResult['error'])){
            ChangePoints();
        break;
             
+       case 'sticker':
+           if($PERSON_TO_SEND=="Tangya"){
+                PushImage($to_ya,@$_POST['index'],$channelAccessToken);
+           }else{
+                PushImage($to_me,@$_POST['index'],$channelAccessToken);  
+           }
+           
+       break;     
+            
        default:   
            $ajaxResult['error'] = $FUNC_NAME.' Not found !';
        break;
@@ -243,6 +301,7 @@ foreach ($client->parseEvents() as $event) {
                            PushMessage($to_me,"Clean Henry:)",$channelAccessToken);
                        }else{
                            PushMessage($to_ya,"Lovely Tangya:)",$channelAccessToken);
+                            PushImage($to,1,$channelAccessToken);
                        }
                     }
                      /* Tangya Talk */
@@ -264,8 +323,10 @@ foreach ($client->parseEvents() as $event) {
                             $count = file_get_contents("http://140.117.6.187/Analysis/FunctionDisplay/linebot_get_point.php");
                             if($add=='ok'){
                               $r_message='你爭氣的獲得了1點! (共 '.$count.'點)'.unichr(0x100022);
+                               PushImage($to,4,$channelAccessToken);  
                             }else{
                               $r_message='你今天拿過點數了! '.unichr(0x10000E);
+                               PushImage($to,8,$channelAccessToken);  
                             }
                         }
                     }

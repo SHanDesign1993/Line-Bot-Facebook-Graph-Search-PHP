@@ -172,6 +172,17 @@ div.scrollmenu a:hover {
                 }
             });
         });
+        
+        $('#weather').click(function () {
+             $.ajax({
+                type: "POST",
+                url: 'index.php',
+                data: {functionname: 'weather',person: $('#personname').val()},
+                success: function (obj, textstatus) {
+                     //alert('兌換成功！');
+                }
+            });
+        });
 
        $("a[id^='sticks']").each(function(index) {
             $(this).on("click", function(){
@@ -214,7 +225,7 @@ div.scrollmenu a:hover {
 <input type="submit" value="送出">
 <!--<a class="button">Preview</a>-->
 <a class="button" id="exchange">兌換點數</a>
-<!--<a class="button" id="food">Push Food</a>-->
+<a class="button" id="weather">天氣狀況</a>
 </form>
 </div>
 <div class="scrollmenu">
@@ -280,7 +291,16 @@ if(!isset($ajaxResult['error'])){
                 PushImage($to_me,@$_POST['index'],$channelAccessToken);  
            }
            
-       break;     
+       break;  
+       
+       case 'weather':
+           if($PERSON_TO_SEND=="Tangya"){
+                PushWeather($to_ya,'高雄前鎮',$channelAccessToken);
+           }else{
+                PushWeather($to_me,'高雄旗津',$channelAccessToken);  
+           }
+           
+       break; 
             
        default:   
            $ajaxResult['error'] = $FUNC_NAME.' Not found !';

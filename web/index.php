@@ -288,18 +288,17 @@ if(!isset($ajaxResult['error'])){
            if($PERSON_TO_SEND=="Tangya"){
                 PushImage($to_ya,@$_POST['index'],$channelAccessToken);
            }else{
-               debug_to_console("HENRY");
                 PushImage($to_me,@$_POST['index'],$channelAccessToken);  
            }
            
        break;  
        
        case 'weather':
+            $t = file_get_contents("140.117.6.187/Analysis/dashboard/line/tester.php");
            if($PERSON_TO_SEND=="Tangya"){
-                PushWeather($to_ya,'高雄前鎮',$channelAccessToken);
+                
            }else{
-               debug_to_console("HENRY");
-                PushWeather($to_me,'高雄旗津',$channelAccessToken);  
+               
            }
            
        break; 
@@ -333,7 +332,7 @@ foreach ($client->parseEvents() as $event) {
                            PushMessage($to_me,"Clean Henry:)",$channelAccessToken);
                        }else{
                            PushMessage($to_ya,"Lovely Tangya:)",$channelAccessToken);
-                            PushImage($to,1,$channelAccessToken);
+                           PushImage($to,1,$channelAccessToken);
                        }
                     }
                      /* Tangya Talk */
@@ -621,14 +620,7 @@ function unicode2utf8($str){
             }
 
         }
-    
-    function debug_to_console( $data ) {
-    $output = $data;
-    if ( is_array( $output ) )
-        $output = implode( ',', $output);
-
-    echo "<script>console.log( 'Debug Objects: " . $output . "' );</script>";
-}
+   
 ?>
 </div>
 </body>

@@ -288,7 +288,7 @@ if(!isset($ajaxResult['error'])){
            if($PERSON_TO_SEND=="Tangya"){
                 PushImage($to_ya,@$_POST['index'],$channelAccessToken);
            }else{
-               echo "To Henry";
+               debug_to_console("HENRY");
                 PushImage($to_me,@$_POST['index'],$channelAccessToken);  
            }
            
@@ -298,7 +298,7 @@ if(!isset($ajaxResult['error'])){
            if($PERSON_TO_SEND=="Tangya"){
                 PushWeather($to_ya,'高雄前鎮',$channelAccessToken);
            }else{
-               echo "To Henry";
+               debug_to_console("HENRY");
                 PushWeather($to_me,'高雄旗津',$channelAccessToken);  
            }
            
@@ -552,7 +552,7 @@ function unicode2utf8($str){
             $data_city = json_decode($json_city, true);
             $cityID=0;
             $cityName='';
-            echo  $search."-1-".$cityID."-";
+            //echo  $search."-1-".$cityID."-";
             foreach($data_city as $d){
                 if (mb_strpos($search,$d['name']) !== false) {
                     $cityName=$d['name'];
@@ -564,7 +564,7 @@ function unicode2utf8($str){
             $townID=0;
             $townName='';
      
-            echo  $search."-2-".$cityID."-".$townID;
+            //echo  $search."-2-".$cityID."-".$townID;
             foreach($data_town['towns'] as $t){
                 if (mb_strpos($search,$t['name']) !== false) {
                     $townName=$t['name'];
@@ -572,7 +572,7 @@ function unicode2utf8($str){
                 }
             }
 
-            echo  $search."-3-".$cityID."-".$townID;
+            debug_to_console ( $search."-3-".$cityID."-".$townID);
 
             if($cityID!=0&&$townID!=0){
                 $json_weather = file_get_contents('https://works.ioa.tw/weather/api/weathers/'.$townID.'.json');
@@ -583,7 +583,9 @@ function unicode2utf8($str){
                 $temp_min = (int)$data_weather['temperature'];
                 $temp_max =  $temp_min+5;
                 $text = "今日氣溫: ".$temp_min." ~ ".$temp_max;
-                echo  $title."-".$text;
+                
+                debug_to_console($title."-".$text);
+
 
                 $item = array(
                     'thumbnailImageUrl' => $img_url,
@@ -614,11 +616,19 @@ function unicode2utf8($str){
                 curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
                 curl_setopt($curl, CURLOPT_POSTFIELDS, json_encode($message_obj));
                 $r = curl_exec($curl);
-                echo $r;
+                debug_to_console($r);
                 curl_close($curl);
             }
 
         }
+    
+    function debug_to_console( $data ) {
+    $output = $data;
+    if ( is_array( $output ) )
+        $output = implode( ',', $output);
+
+    echo "<script>console.log( 'Debug Objects: " . $output . "' );</script>";
+}
 ?>
 </div>
 </body>

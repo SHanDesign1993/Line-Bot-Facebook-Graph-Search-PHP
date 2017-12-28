@@ -297,6 +297,7 @@ if(!isset($ajaxResult['error'])){
            if($PERSON_TO_SEND=="Tangya"){
                 PushWeather($to_ya,'高雄前鎮',$channelAccessToken);
            }else{
+               echo "To Henry";
                 PushWeather($to_me,'高雄旗津',$channelAccessToken);  
            }
            
@@ -550,7 +551,7 @@ function unicode2utf8($str){
             $data_city = json_decode($json_city, true);
             $cityID=0;
             $cityName='';
-
+            echo  $search."-1-".$cityID."-";
             foreach($data_city as $d){
                 if (mb_strpos($search,$d['name']) !== false) {
                     $cityName=$d['name'];
@@ -561,6 +562,8 @@ function unicode2utf8($str){
             $data_town = json_decode($json_town, true);
             $townID=0;
             $townName='';
+     
+            echo  $search."-2-".$cityID."-".$townID;
             foreach($data_town['towns'] as $t){
                 if (mb_strpos($search,$t['name']) !== false) {
                     $townName=$t['name'];
@@ -568,7 +571,7 @@ function unicode2utf8($str){
                 }
             }
 
-            echo  $search."-".$cityID."-".$townID;
+            echo  $search."-3-".$cityID."-".$townID;
 
             if($cityID!=0&&$townID!=0){
                 $json_weather = file_get_contents('https://works.ioa.tw/weather/api/weathers/'.$townID.'.json');

@@ -288,6 +288,7 @@ if(!isset($ajaxResult['error'])){
            if($PERSON_TO_SEND=="Tangya"){
                 PushImage($to_ya,@$_POST['index'],$channelAccessToken);
            }else{
+               echo "To Henry";
                 PushImage($to_me,@$_POST['index'],$channelAccessToken);  
            }
            

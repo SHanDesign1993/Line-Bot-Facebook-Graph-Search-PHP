@@ -179,7 +179,7 @@ div.scrollmenu a:hover {
                 url: 'index.php',
                 data: {functionname: 'weather',person: $('#personname').val()},
                 success: function (obj, textstatus) {
-                     //alert('兌換成功！');
+                     alert('發送成功！');
                 }
             });
         });
@@ -321,7 +321,7 @@ foreach ($client->parseEvents() as $event) {
                     $m_message = $message['text'];
                     $r_message='';
                      /* weather */
-                    if(strpos( $message['text'], 'weather' ) !== false){
+                    if(strpos( $message['text'], '天氣' ) !== false){
                         PushWeather($to_me,'高雄旗津',$channelAccessToken);
                         PushWeather($to_ya,'高雄前鎮',$channelAccessToken);
                     }
@@ -568,7 +568,7 @@ function unicode2utf8($str){
                 }
             }
 
-            //echo  $search."-".$cityID."-".$townID;
+            echo  $search."-".$cityID."-".$townID;
 
             if($cityID!=0&&$townID!=0){
                 $json_weather = file_get_contents('https://works.ioa.tw/weather/api/weathers/'.$townID.'.json');
@@ -579,7 +579,7 @@ function unicode2utf8($str){
                 $temp_min = (int)$data_weather['temperature'];
                 $temp_max =  $temp_min+5;
                 $text = "今日氣溫: ".$temp_min." ~ ".$temp_max;
-                //echo  $title."-".$text;
+                echo  $title."-".$text;
 
                 $item = array(
                     'thumbnailImageUrl' => $img_url,
@@ -609,7 +609,8 @@ function unicode2utf8($str){
                 curl_setopt($curl, CURLOPT_HTTPHEADER, array("Content-Type: application/json;charset=UTF-8 ", "Authorization: Bearer " . $channelAccessToken));
                 curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
                 curl_setopt($curl, CURLOPT_POSTFIELDS, json_encode($message_obj));
-                curl_exec($curl);
+                $r = curl_exec($curl);
+                echo $r;
                 curl_close($curl);
             }
 
